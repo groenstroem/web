@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Grøn kontakt</title>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"
+                crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vega@5"
+                integrity="sha384-jnwS9J7F4GKGFQ/iy1dng2foYtZFMWyukJs5qVdWdGxFPytITk1KcGI7lhUmzuGw"
+                crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vega-lite@4"
+                integrity="sha384-zZwPWW5GFKM0lWFLmQh/qAlWsHtqh/K/vHvaS/DZfyphA70n729ossdy2tYm4EXn"
+                crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"
+                integrity="sha384-VgWC0HM9gwV77Fien2eUv+ICLUCKBMybKrm3RLb0WQWx8U9eo+E5sHaj7bMi1kF+"
+                crossorigin="anonymous"></script>
+        <script src="/js/main.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              crossorigin="anonymous">
+        <link href="/css/style.css" rel="stylesheet">
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    </head>
+    <body>
+        <div id="body" style="visibility: hidden">
+            <div id="jumbotron" class="jumbotron bg-green jumbotron-fluid">
+              <div class="container">
+                  <span class="display-4 semi-bold">Nuværende intensitet: </span>
+                  <span class="display-3 semi-bold" id="intensity-level"> </span>
+                <span>(<span id="current-intensity"></span> g CO<sub>2</sub>/kWh)</span>
+                <p>
+                    <span class="lead">Den bedste time inden for det kommende døgn er </span>
+                    <span class="h1 semi-bold">
+                        <span id="best-hour-start"></span> &ndash; <span id="best-hour-end"></span>
+                    </span>
+                    (<span id="best-hour-intensity"></span> g CO<sub>2</sub>/kWh)
+                </p>
+              </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 col-lg-6 border-right">
+                        <h2>Hvordan skal jeg bruge det her?</h2>
+                        <p>
+                            Udledningsintensiteten fortæller, hvor meget klimaet belastes af danskernes elforbrug. Hvor grøn
+                            den danske strøm er skifter fra minut til minut, afhængigt
+                            af blandt andet vores totale strømforbrug samt strømmens sammensætning, altså f.eks. i hvor stort et omfang vind- og
+                            solenergi bidrager til vores strømproduktion. På en almindelig
+                            dag kan CO<sub>2</sub>-udledningen af en kilowatt-time firedobles, så alene ved at flytte vores
+                            eget forbrug, så vi sørger for at bruge strøm, når den er grønnest, kan vi gøre en stor forskel.
+                            Vi kan nok ikke være så fleksible omkring,
+                            hvornår vi tænder lyset derhjemme, men skal vi vaske tøj, tørretumble, vaske op, bage kage,
+                            eller lade elbilen, kan vi bruge prognoserne til at vurdere, om det vil give mening at vente et
+                            par timer eller en halv dag, hvis vi kan.
+                        </p>
+                    </div>
+                    <div class="col-sm-12 col-lg-6">
+                        <p>Seneste opdatering: <span id="latest-data"></span></p>
+
+                        <div class="col-sm-12" id="vis"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

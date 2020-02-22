@@ -1,0 +1,25 @@
+@font-face {
+    font-family: 'Inter Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Inter Regular'), url('Inter-Regular.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Inter Semi Bold';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Inter Semi Bold'), url('Inter-SemiBold.woff') format('woff');
+}
+
+body {
+    font-family: 'Inter Regular';
+}
+
+.semi-bold {
+    font-family: 'Inter Semi Bold';
+}
+
+.border-right {
+    border-right: 1px solid #DDD;
+}
