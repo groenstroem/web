@@ -60,10 +60,12 @@ class EmissionData:
 
         interval = alt.selection_interval(encodings=['x'],
                                           init={'x': [int(start), int(end)]})
+
         base = alt.Chart(df_combined).mark_line().encode(
             alt.X('yearmonthdatehoursminutes(Minutes5DK):T', title=''),
             alt.Y('CO2Emission:Q', title='Udledningsintensitet [g CO2/kWh]', scale=alt.Scale(domain=(0, height))),
-            alt.Color('Type:N')
+            alt.Color('Type:N'),
+
         )
 
         today_line = alt.Chart(today).mark_rule(clip=True).encode(x='x:T', y='y:Q')
@@ -89,11 +91,16 @@ class EmissionData:
         full_chart = chart & (view + today_line)
 
         return full_chart.configure_axis(
+            titleX=-25,
+            titleY=-20,
+            titleAlign='left',
+            titleAngle=0,
             titleFont='Inter Regular',
             titleFontWeight='normal',
             titleFontSize=13
         ).configure_legend(
             title=None,
+            orient='top-right',
             labelFont='Inter Regular',
             labelFontSize=12
         )
