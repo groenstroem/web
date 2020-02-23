@@ -3,7 +3,7 @@ services:
   web:
     build: .
     ports:
-      - "3031:3031"
+      - "8089:3031"
     restart: always
 
   redis:
