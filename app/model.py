@@ -81,7 +81,7 @@ class EmissionData:
         combined_rect_chart = rect_charts[0] + rect_charts[1] + rect_charts[2] + rect_charts[3] + rect_charts[4]
         top = base.properties(width='container', height=300) \
             .encode(x=alt.X('yearmonthdatehoursminutes(Minutes5DK):T',
-                            axis=alt.Axis(format='%H:%S'),
+                            axis=alt.Axis(format='%H'),
                             title='',
                             scale=alt.Scale(domain=interval.ref())))
         chart = top + today_chart + combined_rect_chart
