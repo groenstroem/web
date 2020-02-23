@@ -9,7 +9,7 @@ from .model import build_model
 app = Flask(__name__,
             static_url_path='',
             static_folder='static')
-cache = RedisCache()
+cache = RedisCache('redis')
 
 
 @app.route('/')
