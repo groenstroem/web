@@ -52,7 +52,8 @@ class EmissionData:
 
         start = m - 3600 * 1000 * 6
         end = m + 3600 * 1000 * 6
-        height = 250
+        # Convert np.int64 to int to ensure that result is JSON serializable
+        height = max(250, int(df_combined.CO2Emission.max()) + 25)
         today = pd.DataFrame({'x': [self.now, self.now], 'y': [0, self.quintiles[-1]]})
         rects = [pd.DataFrame(
             {'x': [self.min_time], 'y': [self.quintiles[i]], 'x2': [self.max_time], 'y2': [self.quintiles[i+1]]})
@@ -65,7 +66,6 @@ class EmissionData:
             alt.X('yearmonthdatehoursminutes(Minutes5DK):T', title=''),
             alt.Y('CO2Emission:Q', title='Udledningsintensitet [g CO2/kWh]', scale=alt.Scale(domain=(0, height))),
             alt.Color('Type:N'),
-
         )
 
         today_line = alt.Chart(today).mark_rule(clip=True).encode(x='x:T', y='y:Q')
