@@ -17,10 +17,10 @@ def root():
     return app.send_static_file('index.html')
 
 
-def get_site_data():
+@app.route('/api/v1/current-emission-intensity')
+def current_emission_intensity():
     model_identifier = 'emission-intensity-model'
     generating_identifier = 'emission-intensity-model-generating'
-    #
     # If someone is in the process of generating data, wait for them to finish.
     counter = 0
     while True:
@@ -41,8 +41,3 @@ def get_site_data():
         return model
     finally:
         cache.delete(generating_identifier)
-
-
-@app.route('/api/v1/current-emission-intensity')
-def current_emission_intensity():
-    return get_site_data()
