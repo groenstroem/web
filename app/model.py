@@ -109,7 +109,7 @@ class EmissionData:
 def build_model():
     data = EmissionData()
     full_chart = data.plot()
-    latest_data = data.now
+    latest_data = data.now.strftime('%Y-%m-%d %H:%M')
     current_emission = data.current_emission
     quintiles = data.quintiles
     if current_emission < quintiles[1]:
