@@ -122,13 +122,14 @@ def build_model():
         index = 3
     else:
         index = 4
-    colors = ['rgba(0, 255, 0, 0.4)', 'rgba(128, 255, 128, 0.4)', 'rgba(255, 255, 0, 0.4)',
-              'rgba(255, 128, 128, 0.4)', 'rgba(255, 0, 0, 0.4)']
-    levels = ['Meget lav', 'Lav', 'Moderat', 'Høj', 'Meget høj']
+    bg_colors = ['#080', '#040', 'rgba(255, 255, 0, 0.75)', '#333', '#222']
+    fg_colors = ['#FFF', '#EEE', '#222', '#FFF', '#EEE']
+    levels = ['Meget grøn', 'Grøn', 'Hverken grøn eller sort', 'Sort', 'Meget sort']
     best_hour_start = f'{data.lowest_interval_start.strftime("%H:%M")}'
     best_hour_end = f'{data.lowest_interval_end.strftime("%H:%M")}'
     best_hour_intensity = int(round(data.lowest_mean))
-    emission_intensity = {'intensity-level-color': colors[index],
+    emission_intensity = {'intensity-level-bgcolor': bg_colors[index],
+                          'intensity-level-fgcolor': fg_colors[index],
                           'intensity-level': levels[index],
                           'current-intensity': current_emission,
                           'best-hour-start': best_hour_start,
