@@ -122,7 +122,7 @@ def build_model():
         index = 3
     else:
         index = 4
-    bg_colors = ['#080', '#040', 'rgba(255, 255, 0, 0.75)', '#333', '#222']
+    bg_colors = ['#080', '#040', 'rgba(255, 255, 0, 0.75)', '#222', '#111']
     fg_colors = ['#FFF', '#EEE', '#222', '#FFF', '#EEE']
     levels = ['Meget grøn', 'Grøn', 'Hverken grøn eller sort', 'Sort', 'Meget sort']
     best_hour_start = f'{data.lowest_interval_start.strftime("%H:%M")}'
