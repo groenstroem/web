@@ -12,8 +12,16 @@
     src: local('Inter Semi Bold'), url('Inter-SemiBold.woff') format('woff');
 }
 
+html {
+    overflow: hidden;
+    height: 100%;
+}
+
 body {
+    height: 100%;
     font-family: 'Inter Regular';
+    overflow-y: scroll;
+    -webkit-overflow-scrolling:touch;
 }
 
 .semi-bold {

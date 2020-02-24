@@ -25,18 +25,20 @@
     </head>
     <body>
         <div id="body" style="visibility: hidden">
-            <div id="jumbotron" class="jumbotron bg-green jumbotron-fluid">
-              <div class="container">
-                  <span class="display-4 semi-bold">Nuværende intensitet: </span>
-                  <span class="display-3 semi-bold" id="intensity-level"> </span>
-                <span>(<span id="current-intensity"></span> g CO<sub>2</sub>/kWh)</span>
-                <p>
-                    <span class="lead">Den bedste time inden for det kommende døgn er </span>
-                    <span class="h1 semi-bold">
-                        <span id="best-hour-start"></span>&nbsp;&ndash;&nbsp;<span id="best-hour-end"></span>
-                    </span>
-                    (<span id="best-hour-intensity"></span> g CO<sub>2</sub>/kWh)
-                </p>
+            <div id="jumbotron" style="padding-top: 5vh; margin-bottom: 5vh; height: 100vh; width: 100%; padding-left: 10vw; padding-right: 10vw">
+              <div style="">
+                  <p style="font-size: 4vmin">Lige nu er strømmen</p>
+                  <div style="text-align: center; padding-bottom: 5vh;">
+                      <div class="semi-bold" id="intensity-level" style="font-size: 10vmin"></div>
+                      <span style="font-size: 2vmin">(<span id="current-intensity"></span>&nbsp;g&nbsp;CO<sub>2</sub>/kWh)</span>
+                  </div>
+                  <p style="font-size: 3vmin">Den grønneste time inden for det kommende døgn er </p>
+                  <div style="text-align: center">
+                      <div class="semi-bold" style="font-size: 9vmin">
+                          <span id="best-hour-start"></span>&nbsp;&ndash;&nbsp;<span id="best-hour-end"></span>
+                      </div>
+                      <span style="font-size: 2vmin">(<span id="best-hour-intensity"></span>&nbsp;g&nbsp;CO<sub>2</sub>/kWh)</span>
+                  </div>
               </div>
             </div>
             <div class="container">
