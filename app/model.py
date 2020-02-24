@@ -50,8 +50,8 @@ class EmissionData:
         df_combined = self.df
         m = self.now_utc_int
 
-        start = m - 3600 * 1000 * 6
-        end = m + 3600 * 1000 * 6
+        start = m - 3600 * 1000 * 12
+        end = m + 3600 * 1000 * 12
         # Convert np.int64 to int to ensure that result is JSON serializable
         height = max(250, int(df_combined.CO2Emission.max()) + 25)
         today = pd.DataFrame({'x': [self.now, self.now], 'y': [0, self.quintiles[-1]]})
