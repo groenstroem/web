@@ -62,7 +62,7 @@ class EmissionData:
         interval = alt.selection_interval(encodings=['x'],
                                           init={'x': [int(start), int(end)]})
 
-        base = alt.Chart(df_combined).mark_line().encode(
+        base = alt.Chart(df_combined).mark_line(strokeWidth=4).encode(
             alt.X('yearmonthdatehoursminutes(Minutes5DK):T', title=''),
             alt.Y('CO2Emission:Q', title='Udledningsintensitet [g CO2/kWh]', scale=alt.Scale(domain=(0, height))),
             alt.Color('Type:N'),
