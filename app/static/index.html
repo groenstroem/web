@@ -7,6 +7,12 @@
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"
                 integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"
                 crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+                integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+                crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+                integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+                crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vega@5.9.1"
                 integrity="sha384-jnwS9J7F4GKGFQ/iy1dng2foYtZFMWyukJs5qVdWdGxFPytITk1KcGI7lhUmzuGw"
                 crossorigin="anonymous"></script>
@@ -16,7 +22,6 @@
         <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.3.2"
                 integrity="sha384-wAD10AkncYuCeL9yScHrExkHU3fKYL8H99kwxIbZ11goCG5KWPOUP98JzcsFhJmt"
                 crossorigin="anonymous"></script>
-        <script src="/js/main.js"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
               integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
               crossorigin="anonymous">
@@ -32,7 +37,33 @@
                   <div id="intensity-level" style="font-size: 10vmin"></div>
                   <span style="font-size: 2vmin">(<span id="current-intensity"></span>&nbsp;g&nbsp;CO<sub>2</sub>/kWh)</span>
               </div>
-              <p style="font-size: 3vmin">Den grønneste time inden for det kommende døgn er </p>
+                <span style="font-size: 3vmin"><span id="de-den">Den</span> grønneste
+                <span class="btn-group">
+                  <button type="button" id="dropdown-toggle-period" class="btn btn-transparent dropdown-toggle"
+                          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-value="1">
+                    time
+                  </button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" data-value="1" href="#">time</a>
+                    <a class="dropdown-item" data-value="2" href="#">2 timer</a>
+                    <a class="dropdown-item" data-value="3" href="#">3 timer</a>
+                    <a class="dropdown-item" data-value="4" href="#">4 timer</a>
+                    <a class="dropdown-item" data-value="5" href="#">5 timer</a>
+                    <a class="dropdown-item" data-value="6" href="#">6 timer</a>
+                  </div>
+                </span>
+                inden for de kommende
+                <span class="btn-group">
+                  <button type="button" id="dropdown-toggle-horizon" class="btn btn-transparent dropdown-toggle"
+                          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-value="12">
+                    12 timer
+                  </button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" data-value="6" href="#">6 timer</a>
+                    <a class="dropdown-item" data-value="12" href="#">12 timer</a>
+                    <a class="dropdown-item" data-value="24" href="#">24 timer</a>
+                  </div>
+                </span> er </span>
               <div style="text-align: center">
                   <div style="font-size: 9vmin">
                       <span id="best-hour-start"></span>&nbsp;&ndash;&nbsp;<span id="best-hour-end"></span>
@@ -86,5 +117,6 @@
                 </div>
             </div>
         </div>
+        <script src="/js/main.js"></script>
     </body>
 </html>

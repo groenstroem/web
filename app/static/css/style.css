@@ -31,3 +31,10 @@ body {
 .border-right {
     border-right: 1px solid #DDD;
 }
+
+.btn-transparent {
+    font-size: 3vmin;
+    border: 1px solid;
+    padding: 5px 10px 5px 10px;
+    margin-bottom: 2px;
+}

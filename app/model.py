@@ -31,12 +31,13 @@ class EmissionData:
                                df_actual.iloc[-1]['CO2Emission'],
                                'Prognose']
         # Calculate best hour to use power
-        df_next_day = df_forecast[df_forecast.Minutes5UTC < df_actual.Minutes5UTC.max() + pd.Timedelta('1D')]
-        rolling = df_next_day.set_index('Minutes5DK').CO2Emission.rolling('1H', min_periods=12).mean()[11:]
-        lowest = rolling.idxmin()
-        self.lowest_mean = rolling.loc[lowest]
-        self.lowest_interval_start = lowest - pd.Timedelta('55m')
-        self.lowest_interval_end = lowest + pd.Timedelta('5m')
+        #df_next_day = df_forecast[df_forecast.Minutes5UTC < df_actual.Minutes5UTC.max() + pd.Timedelta('1D')]
+        #rolling = df_next_day.set_index('Minutes5DK').CO2Emission.rolling('1H', min_periods=12).mean()[11:]
+        #lowest = rolling.idxmin()
+        #self.lowest_mean = rolling.loc[lowest]
+        #self.lowest_interval_start = lowest - pd.Timedelta('55m')
+        #self.lowest_interval_end = lowest + pd.Timedelta('5m')
+        self.df_forecast = df_forecast
         self.df = pd.concat([df_actual, df_forecast])
         self.df['Minutes5DK'] = self.df.Minutes5DK.dt.tz_localize('Europe/Copenhagen')
         self.now_utc_int = df_actual.Minutes5UTC.astype(int).max() / 1000000
@@ -107,6 +108,15 @@ class EmissionData:
             labelFontSize=12
         )
 
+def get_greenest(df_forecast, period: int, horizon: int):
+    df_next_day = df_forecast[df_forecast.Minutes5UTC < df_forecast.Minutes5UTC.min() + pd.Timedelta(f'{horizon}H')]
+    min_periods = period * 12
+    rolling = df_next_day.set_index('Minutes5DK').CO2Emission.rolling(f'{period}H', min_periods=min_periods).mean()[min_periods-1:]
+    lowest = rolling.idxmin()
+    lowest_mean = rolling.loc[lowest]
+    lowest_interval_start = lowest - pd.Timedelta(f'{period}H') + pd.Timedelta('5m')
+    lowest_interval_end = lowest + pd.Timedelta('5m')
+    return lowest_mean, lowest_interval_start, lowest_interval_end
 
 def build_model():
     data = EmissionData()
@@ -125,18 +135,23 @@ def build_model():
     else:
         index = 4
     bg_colors = ['#080', '#040', 'rgba(255, 255, 0, 0.6)', '#222', '#111']
+    border_colors = ['#070', '#030', '#dd0', '#333', '#222']
     fg_colors = ['#FFF', '#EEE', '#222', '#FFF', '#EEE']
     levels = ['Meget grøn', 'Grøn', 'Hverken grøn eller sort', 'Sort', 'Meget sort']
-    best_hour_start = f'{data.lowest_interval_start.strftime("%H:%M")}'
-    best_hour_end = f'{data.lowest_interval_end.strftime("%H:%M")}'
-    best_hour_intensity = int(round(data.lowest_mean))
     emission_intensity = {'intensity-level-bgcolor': bg_colors[index],
                           'intensity-level-fgcolor': fg_colors[index],
+                          'intensity-level-border-color': border_colors[index],
                           'intensity-level': levels[index],
                           'current-intensity': current_emission,
-                          'best-hour-start': best_hour_start,
-                          'best-hour-end': best_hour_end,
-                          'best-hour-intensity': best_hour_intensity,
                           'latest-data': latest_data,
                           'plot-data': full_chart.to_dict()}
-    return emission_intensity
+    return emission_intensity, data.df_forecast
+
+def best_hour(df_forecast, period, horizon):
+    lowest_mean, lowest_interval_start, lowest_interval_end = get_greenest(df_forecast, period, horizon)
+    best_hour_start = f'{lowest_interval_start.strftime("%H:%M")}'
+    best_hour_end = f'{lowest_interval_end.strftime("%H:%M")}'
+    best_hour_intensity = int(round(lowest_mean))
+    return {'best-hour-start': best_hour_start,
+            'best-hour-end': best_hour_end,
+            'best-hour-intensity': best_hour_intensity}
