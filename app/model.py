@@ -51,7 +51,8 @@ class EmissionData:
         m = self.now_utc_int
 
         start = m - 3600 * 1000 * 12
-        end = m + 3600 * 1000 * 12
+        max_time_unix = self.df.Minutes5UTC.astype(int).max() / 1000000
+        end = min(m + 3600 * 1000 * 12, max_time_unix)
         # Convert np.int64 to int to ensure that result is JSON serializable
         height = max(250, int(df_combined.CO2Emission.max()) + 25)
         today = pd.DataFrame({'x': [self.now, self.now], 'y': [0, self.quintiles[-1]]})
@@ -63,7 +64,7 @@ class EmissionData:
                                           init={'x': [int(start), int(end)]})
 
         base = alt.Chart(df_combined).mark_line(strokeWidth=4).encode(
-            alt.X('yearmonthdatehoursminutes(Minutes5DK):T', title=''),
+            alt.X('Minutes5DK:T', title=''),
             alt.Y('CO2Emission:Q', title='Udledningsintensitet [g CO2/kWh]', scale=alt.Scale(domain=(0, height))),
             alt.Color('Type:N'),
         )
@@ -80,7 +81,7 @@ class EmissionData:
                        for data, color in zip(rects, ['green', 'lightgreen', 'yellow', 'lightcoral', 'red'])]
         combined_rect_chart = rect_charts[0] + rect_charts[1] + rect_charts[2] + rect_charts[3] + rect_charts[4]
         top = base.properties(width='container', height=300) \
-            .encode(x=alt.X('yearmonthdatehoursminutes(Minutes5DK):T',
+            .encode(x=alt.X('Minutes5DK:T',
                             axis=alt.Axis(format='%H'),
                             title='',
                             scale=alt.Scale(domain=interval.ref())))
