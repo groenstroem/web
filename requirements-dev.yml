@@ -4,6 +4,7 @@ dependencies:
   - altair
   - flask
   - pandas
+  - pyarrow
   - requests
   - uwsgi
   - vega
