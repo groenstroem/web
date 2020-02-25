@@ -2,6 +2,7 @@ $(document).ready(function() {
     $.get("/api/v1/current-emission-intensity", function(data) {
       $("#jumbotron").css("background-color", data["intensity-level-bgcolor"]);
       $("#jumbotron").css("color", data["intensity-level-fgcolor"]);
+      $("#info-link").css("color", data["intensity-level-fgcolor"]);
       $("#intensity-level").text(data["intensity-level"]);
       $("#current-intensity").text(data["current-intensity"]);
       $("#latest-data").text(data["latest-data"]);
