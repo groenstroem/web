@@ -2,6 +2,7 @@ import time
 
 from cachelib import RedisCache
 from flask import Flask
+import pyarrow as pa
 import pandas as pd
 
 from .model import build_model, best_hour
@@ -46,7 +47,9 @@ def update_data():
         cache.set(generating_identifier, True)
         model, forecast = build_model()
         cache.set(model_identifier, model, timeout=5*60)
-        cache.set(forecast_identifier, forecast.to_msgpack(compress='zlib'), timeout=5*60)
+
+        context = pa.default_serialization_context()
+        cache.set(forecast_identifier, context.serialize(forecast).to_buffer().to_pybytes(), timeout=5*60)
         return model, forecast
     finally:
         cache.delete(generating_identifier)
@@ -58,6 +61,7 @@ def greenest_hour(period, horizon):
     wait_until_not_generating()
     forecast = cache.get(forecast_identifier)
     if forecast:
-        return best_hour(pd.read_msgpack(forecast), period, horizon)
+        context = pa.default_serialization_context()
+        return best_hour(context.deserialize(forecast), period, horizon)
     _, forecast = update_data()
     return best_hour(forecast, period, horizon)
