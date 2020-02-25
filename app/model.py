@@ -38,6 +38,7 @@ class EmissionData:
         self.lowest_interval_start = lowest - pd.Timedelta('55m')
         self.lowest_interval_end = lowest + pd.Timedelta('5m')
         self.df = pd.concat([df_actual, df_forecast])
+        self.df['Minutes5DK'] = self.df.Minutes5DK.dt.tz_localize('Europe/Copenhagen')
         self.now_utc_int = df_actual.Minutes5UTC.astype(int).max() / 1000000
         self.min_time = self.df.Minutes5DK.min()
         self.max_time = self.df.Minutes5DK.max()
