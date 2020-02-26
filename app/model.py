@@ -142,16 +142,22 @@ def build_model():
                           'intensity-level-fgcolor': fg_colors[index],
                           'intensity-level-border-color': border_colors[index],
                           'intensity-level': levels[index],
-                          'current-intensity': current_emission,
                           'latest-data': latest_data,
                           'plot-data': full_chart.to_dict()}
     return emission_intensity, data.df_forecast
+
+def current_emission(df_forecast, period):
+    return int(round(df_forecast.iloc[:12*period].CO2Emission.mean()))
 
 def best_hour(df_forecast, period, horizon):
     lowest_mean, lowest_interval_start, lowest_interval_end = get_greenest(df_forecast, period, horizon)
     best_hour_start = f'{lowest_interval_start.strftime("%H:%M")}'
     best_hour_end = f'{lowest_interval_end.strftime("%H:%M")}'
     best_hour_intensity = int(round(lowest_mean))
-    return {'best-hour-start': best_hour_start,
+    current = current_emission(df_forecast, period)
+    improvement = f'{int(round(100*(1 - best_hour_intensity/current)))} %'
+    return {'current-intensity': current,
+            'improvement': improvement,
+            'best-hour-start': best_hour_start,
             'best-hour-end': best_hour_end,
             'best-hour-intensity': best_hour_intensity}
