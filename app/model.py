@@ -1,3 +1,5 @@
+import math
+
 import altair as alt
 import pandas as pd
 import requests
@@ -38,6 +40,7 @@ class EmissionData:
         #self.lowest_interval_start = lowest - pd.Timedelta('55m')
         #self.lowest_interval_end = lowest + pd.Timedelta('5m')
         self.df_forecast = df_forecast
+        self.forecast_length_hours = math.ceil(len(df_forecast) / 12)
         self.df = pd.concat([df_actual, df_forecast])
         self.df['Minutes5DK'] = self.df.Minutes5DK.dt.tz_localize('Europe/Copenhagen')
         self.now_utc_int = df_actual.Minutes5UTC.astype(int).max() / 1000000
@@ -142,6 +145,7 @@ def build_model():
                           'intensity-level-fgcolor': fg_colors[index],
                           'intensity-level-border-color': border_colors[index],
                           'intensity-level': levels[index],
+                          'forecast-length-hours': data.forecast_length_hours,
                           'latest-data': latest_data,
                           'plot-data': full_chart.to_dict()}
     return emission_intensity, data.df_forecast

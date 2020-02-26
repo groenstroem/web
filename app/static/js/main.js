@@ -19,6 +19,14 @@ $(document).ready(function() {
       $("#latest-data").text(data["latest-data"]);
       $("#body").css('visibility', 'visible');
       $(".btn-transparent").css('color', data["intensity-level-fgcolor"]);
+      var length = data["forecast-length-hours"];
+      if (length <= 12) {
+        $("#dropdown-12-hours").html(length + " timer");
+        $("#dropdown-24-hours").css('visibility', 'collapse');
+      } else if (length < 24) {
+        $("#dropdown-24-hours").html(length + " timer");
+      }
+
       updateGreenestHour(1, 12);
       var plot_data = data["plot-data"];
       var plot_opt = {"renderer": "canvas", "actions": false};
@@ -29,11 +37,14 @@ $(document).ready(function() {
 $(".dropdown-menu>a").on('click', function() {
     var selText = $(this).text();
     console.log(selText);
-    $(this).parent('.dropdown-menu').siblings('.dropdown-toggle').html(selText);
-    $(this).parent('.dropdown-menu').siblings('.dropdown-toggle').data('value', $(this).data('value'));
+    var dropdownToggle = $(this).parent('.dropdown-menu').siblings('.dropdown-toggle')
+    dropdownToggle.html(selText);
+    dropdownToggle.data('value', $(this).data('value'));
     var period = $('#dropdown-toggle-period').data('value');
     var horizon = $('#dropdown-toggle-horizon').data('value');
-    $('#hours').html(selText);
+    if (dropdownToggle[0].id == "dropdown-toggle-period") {
+        $('#hours').html(selText);
+    }
     if (period > 1) {
         $('#de-den-upper').html("De");
         $('#de-den-lower').html("de");
