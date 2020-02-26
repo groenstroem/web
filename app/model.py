@@ -134,9 +134,9 @@ def build_model():
         index = 3
     else:
         index = 4
-    bg_colors = ['#080', '#040', 'rgba(255, 255, 0, 0.6)', '#222', '#111']
-    border_colors = ['#070', '#030', '#dd0', '#333', '#222']
-    fg_colors = ['#FFF', '#EEE', '#222', '#FFF', '#EEE']
+    bg_colors = [f'rgba(0, {i}, 0, 0.9)' for i in range(128, -32, -32)]
+    border_colors = [f'rgba(0, {i+32}, 0, 0.9)' for i in range(128, 0, -32)] + ['#333']
+    fg_colors = ['#FFF', '#FFF', '#EEE', '#EEE', '#EEE']
     levels = ['Meget grøn', 'Grøn', 'Hverken grøn eller sort', 'Sort', 'Meget sort']
     emission_intensity = {'intensity-level-bgcolor': bg_colors[index],
                           'intensity-level-fgcolor': fg_colors[index],
