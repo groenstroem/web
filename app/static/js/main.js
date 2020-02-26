@@ -1,4 +1,6 @@
-function updateGreenestHour(period, horizon) {
+function updateGreenestHour() {
+    var period = $('#dropdown-toggle-period').data('value');
+    var horizon = $('#dropdown-toggle-horizon').data('value');
     $.get("/api/v1/greenest-hour/" + period + "/" + horizon, function(data) {
       $("#current-intensity").text(data["current-intensity"]);
       $("#improvement").text(data["improvement"]);
@@ -8,8 +10,7 @@ function updateGreenestHour(period, horizon) {
     });
 }
 
-
-$(document).ready(function() {
+function updateEmissionIntensity() {
     $.get("/api/v1/current-emission-intensity", function(data) {
       $("#jumbotron").css("background-color", data["intensity-level-bgcolor"]);
       $("#jumbotron").css("color", data["intensity-level-fgcolor"]);
@@ -27,24 +28,31 @@ $(document).ready(function() {
         $("#dropdown-24-hours").html(length + " timer");
       }
 
-      updateGreenestHour(1, 12);
       var plot_data = data["plot-data"];
       var plot_opt = {"renderer": "canvas", "actions": false};
       vegaEmbed("#vis", plot_data, plot_opt);
     });
+}
+
+function updateAll() {
+    updateEmissionIntensity();
+    updateGreenestHour();
+}
+
+$(document).ready(function() {
+    updateAll();
+    setInterval(updateAll, 5*60*1000);
 });
 
 $(".dropdown-menu>a").on('click', function() {
     var selText = $(this).text();
-    console.log(selText);
     var dropdownToggle = $(this).parent('.dropdown-menu').siblings('.dropdown-toggle')
     dropdownToggle.html(selText);
     dropdownToggle.data('value', $(this).data('value'));
-    var period = $('#dropdown-toggle-period').data('value');
-    var horizon = $('#dropdown-toggle-horizon').data('value');
     if (dropdownToggle[0].id == "dropdown-toggle-period") {
         $('#hours').html(selText);
     }
+    var period = $('#dropdown-toggle-period').data('value');
     if (period > 1) {
         $('#de-den-upper').html("De");
         $('#de-den-lower').html("de");
@@ -52,5 +60,5 @@ $(".dropdown-menu>a").on('click', function() {
         $('#de-den-upper').html("Den");
         $('#de-den-lower').html("den");
     }
-    updateGreenestHour(period, horizon);
+    updateGreenestHour();
 });
