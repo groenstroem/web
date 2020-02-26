@@ -140,7 +140,7 @@ def build_model():
     bg_colors = [f'rgba(0, {i}, 0, 0.9)' for i in range(128, -32, -32)]
     border_colors = [f'rgba(0, {i+32}, 0, 0.9)' for i in range(128, 0, -32)] + ['#333']
     fg_colors = ['#FFF', '#FFF', '#EEE', '#EEE', '#EEE']
-    levels = ['Meget grøn', 'Grøn', 'Hverken grøn eller sort', 'Sort', 'Meget sort']
+    levels = ['Meget grøn', 'Grøn', 'Både grøn og sort', 'Sort', 'Kulsort']
     emission_intensity = {'intensity-level-bgcolor': bg_colors[index],
                           'intensity-level-fgcolor': fg_colors[index],
                           'intensity-level-border-color': border_colors[index],
