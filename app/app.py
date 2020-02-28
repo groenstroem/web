@@ -1,4 +1,6 @@
 import time
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from cachelib import RedisCache
 from flask import Flask
