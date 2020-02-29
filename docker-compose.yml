@@ -5,6 +5,8 @@ services:
     ports:
       - "3031:3031"
     restart: always
+    volumes:
+      - .:/app
 
   redis:
     image: "redis:alpine"

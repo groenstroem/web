@@ -1,0 +1,13 @@
+{
+  "background_color": "green",
+  "description": "Hvornår er strømmen grøn?",
+  "display": "standalone",
+  "icons": [{
+    "src": "favicon.ico",
+    "sizes": "16x16",
+    "type": "image/ico"
+  }],
+  "name": "Er strømmen grøn?",
+  "short_name": "Grøn Strøm",
+  "start_url": "."
+}
