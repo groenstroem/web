@@ -32,6 +32,7 @@ def current_emission_intensity():
     model, _ = update_data()
     return model
 
+
 def wait_until_not_generating():
     counter = 0
     while True:
@@ -43,6 +44,7 @@ def wait_until_not_generating():
         time.sleep(0.1)
         counter += 1
 
+
 def update_data():
     try:
         cache.set(generating_identifier, True)
@@ -52,6 +54,7 @@ def update_data():
         return model, forecast
     finally:
         cache.delete(generating_identifier)
+
 
 @app.route('/api/v1/greenest-hour/<period>/<horizon>', methods=['GET'])
 def greenest_hour(period, horizon):
