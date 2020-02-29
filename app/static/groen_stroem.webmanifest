@@ -3,9 +3,9 @@
   "description": "Hvornår er strømmen grøn?",
   "display": "standalone",
   "icons": [{
-    "src": "favicon.ico",
-    "sizes": "16x16",
-    "type": "image/ico"
+    "src": "plug.svg",
+    "sizes": "512x512",
+    "type": "image/svg"
   }],
   "name": "Er strømmen grøn?",
   "short_name": "Grøn strøm",
