@@ -1,7 +1,7 @@
 {
   "background_color": "green",
   "description": "Hvornår er strømmen grøn?",
-  "display": "fullscreen",
+  "display": "standalone",
   "icons": [
      {
       "src": "plug-192.png",
