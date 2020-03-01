@@ -104,6 +104,7 @@ class EmissionData:
             labelFontSize=12
         )
 
+
 def get_greenest(df_forecast, period: int, horizon: int):
     df_next_day = df_forecast[df_forecast.Minutes5UTC < df_forecast.Minutes5UTC.min() + pd.Timedelta(f'{horizon}H')]
     min_periods = period * 12
@@ -113,6 +114,7 @@ def get_greenest(df_forecast, period: int, horizon: int):
     lowest_interval_start = lowest - pd.Timedelta(f'{period}H') + pd.Timedelta('5m')
     lowest_interval_end = lowest + pd.Timedelta('5m')
     return lowest_mean, lowest_interval_start, lowest_interval_end
+
 
 def build_model():
     data = EmissionData()
@@ -143,8 +145,10 @@ def build_model():
                           'plot-data': full_chart.to_dict()}
     return emission_intensity, data.df_forecast
 
+
 def current_emission(df_forecast, period):
     return int(round(df_forecast.iloc[:12*period].CO2Emission.mean()))
+
 
 def best_hour(df_forecast, period, horizon):
     lowest_mean, lowest_interval_start, lowest_interval_end = get_greenest(df_forecast, period, horizon)
