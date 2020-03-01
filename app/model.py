@@ -32,13 +32,6 @@ class EmissionData:
                                df_actual.Minutes5DK.max(),
                                df_actual.iloc[-1]['CO2Emission'],
                                'Prognose']
-        # Calculate best hour to use power
-        #df_next_day = df_forecast[df_forecast.Minutes5UTC < df_actual.Minutes5UTC.max() + pd.Timedelta('1D')]
-        #rolling = df_next_day.set_index('Minutes5DK').CO2Emission.rolling('1H', min_periods=12).mean()[11:]
-        #lowest = rolling.idxmin()
-        #self.lowest_mean = rolling.loc[lowest]
-        #self.lowest_interval_start = lowest - pd.Timedelta('55m')
-        #self.lowest_interval_end = lowest + pd.Timedelta('5m')
         self.df_forecast = df_forecast
         self.forecast_length_hours = math.ceil(len(df_forecast) / 12)
         self.df = pd.concat([df_actual, df_forecast])
