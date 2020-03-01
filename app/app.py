@@ -18,6 +18,7 @@ model_identifier = 'emission-intensity-model'
 generating_identifier = 'emission-intensity-model-generating'
 forecast_identifier = 'emission-intensity-forecast'
 
+
 @app.route('/')
 def root():
     return app.send_static_file('index.html')

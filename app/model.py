@@ -108,7 +108,8 @@ class EmissionData:
 def get_greenest(df_forecast, period: int, horizon: int):
     df_next_day = df_forecast[df_forecast.Minutes5UTC < df_forecast.Minutes5UTC.min() + pd.Timedelta(f'{horizon}H')]
     min_periods = period * 12
-    rolling = df_next_day.set_index('Minutes5DK').CO2Emission.rolling(f'{period}H', min_periods=min_periods).mean()[min_periods-1:]
+    rolling = df_next_day.set_index('Minutes5DK').CO2Emission\
+                         .rolling(f'{period}H', min_periods=min_periods).mean()[min_periods-1:]
     lowest = rolling.idxmin()
     lowest_mean = rolling.loc[lowest]
     lowest_interval_start = lowest - pd.Timedelta(f'{period}H') + pd.Timedelta('5m')
@@ -146,7 +147,7 @@ def build_model():
     return emission_intensity, data.df_forecast
 
 
-def current_emission(df_forecast, period):
+def current_period_emission(df_forecast, period):
     return int(round(df_forecast.iloc[:12*period].CO2Emission.mean()))
 
 
@@ -155,7 +156,7 @@ def best_hour(df_forecast, period, horizon):
     best_hour_start = f'{lowest_interval_start.strftime("%H:%M")}'
     best_hour_end = f'{lowest_interval_end.strftime("%H:%M")}'
     best_hour_intensity = int(round(lowest_mean))
-    current = current_emission(df_forecast, period)
+    current = current_period_emission(df_forecast, period)
     improvement = f'{int(round(100*(1 - best_hour_intensity/current)))} %'
     return {'current-intensity': current,
             'improvement': improvement,
