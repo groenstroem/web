@@ -42,6 +42,18 @@ function updateAll() {
 $(document).ready(function() {
     updateAll();
     setInterval(updateAll, 5*60*1000);
+    var ua = navigator.userAgent.toLowerCase();
+    var isiOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+    if (ua.indexOf('firefox') > -1 && ua.indexOf('android') > -1)
+        $("#firefox-android-guide").css('display', 'inherit');
+    if (ua.indexOf('chrome') > -1 && ua.indexOf('android') > -1)
+        $("#chrome-android-guide").css('display', 'inherit');
+    if (ua.indexOf('fxios') > -1)
+        $("#firefox-ios-guide").css('display', 'inherit');
+    if (ua.indexOf('crios') > -1)
+        $("#chrome-ios-guide").css('display', 'inherit');
+    if (ua.indexOf('safari') > -1 && isiOS)
+        $("#safari-ios-guide").css('display', 'inherit');
 });
 
 $(window).on('focus', function() { updateAll(); });
