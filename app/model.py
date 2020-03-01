@@ -106,6 +106,7 @@ class EmissionData:
 
 
 def get_greenest(df_forecast, period: int, horizon: int):
+    """Given a data frame of forecast data, determines the greenest period of a given length in the given horizon."""
     df_next_day = df_forecast[df_forecast.Minutes5UTC < df_forecast.Minutes5UTC.min() + pd.Timedelta(f'{horizon}H')]
     min_periods = period * 12
     rolling = df_next_day.set_index('Minutes5DK').CO2Emission\
