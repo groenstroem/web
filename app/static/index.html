@@ -1,136 +1,136 @@
 <!doctype html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
-        <title>Er strømmen grøn?</title>
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js"
-                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"
-                crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-                integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-                crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-                integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-                crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vega@5.9.1"
-                integrity="sha384-jnwS9J7F4GKGFQ/iy1dng2foYtZFMWyukJs5qVdWdGxFPytITk1KcGI7lhUmzuGw"
-                crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vega-lite@4.4.0"
-                integrity="sha384-zZwPWW5GFKM0lWFLmQh/qAlWsHtqh/K/vHvaS/DZfyphA70n729ossdy2tYm4EXn"
-                crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.3.2"
-                integrity="sha384-wAD10AkncYuCeL9yScHrExkHU3fKYL8H99kwxIbZ11goCG5KWPOUP98JzcsFhJmt"
-                crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-              crossorigin="anonymous">
-        <link href="/css/style.css" rel="stylesheet">
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="manifest" href="/manifest.json">
-        <link rel="apple-touch-icon" sizes="192x192" href="plug-192.png">
-    </head>
-    <body>
-        <div id="body" style="visibility: hidden">
-            <div style="height: 5vh">
-                <span style="height: 100%; width: 20%; display: inline-block; background-color: rgba(0, 128, 0, 0.9)"></span><span style="height: 100%; width: 20%; display: inline-block; background-color: rgba(0, 96, 0, 0.9)"></span><span style="height: 100%; width: 20%; display: inline-block; background-color: rgba(0, 64, 0, 0.9)"></span><span style="height: 100%; width: 20%; display: inline-block; background-color: rgba(0, 32, 0, 0.9)"></span><span style="height: 100%; width: 20%; display: inline-block; background-color: rgba(0, 0, 0, 0.9)"></span>
-            </div>
-            <div id="jumbotron" style="padding-top: 5vh; padding-bottom: 5vh; margin-bottom: 5vh; position: relative; height: 95vh; width: 100%; padding-left: 8vw; padding-right: 8vw">
-              <div class="semi-bold" style="position: absolute; right: 5vh; bottom: 10vh; font-size: 4vmin;"><p><a href="#info" id="info-link">Mere info ↓</a></p></div>
-              <p class="semi-bold" style="font-size: 6vmin">Lige nu er strømmen</p>
-              <div style="text-align: center; padding-bottom: 6vh;">
-                  <div class="semi-bold" id="intensity-level" style="font-size: 14vmin"></div>
-                  <span style="font-size: 4vmin">(<span id="current-intensity"></span>&nbsp;g&nbsp;CO<sub>2</sub>/kWh over <span id="de-den-lower">den</span> næste <span id="hours">time</span>)</span>
-              </div>
-                <span class="semi-bold" style="font-size: 5vmin"><span id="de-den-upper">Den</span> grønneste
-                <span class="semi-bold btn-group">
-                  <button type="button" id="dropdown-toggle-period" class="btn btn-transparent dropdown-toggle"
-                          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-value="1">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <title>Er strømmen grøn?</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.9.1"
+            integrity="sha384-jnwS9J7F4GKGFQ/iy1dng2foYtZFMWyukJs5qVdWdGxFPytITk1KcGI7lhUmzuGw"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@4.4.0"
+            integrity="sha384-zZwPWW5GFKM0lWFLmQh/qAlWsHtqh/K/vHvaS/DZfyphA70n729ossdy2tYm4EXn"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.3.2"
+            integrity="sha384-wAD10AkncYuCeL9yScHrExkHU3fKYL8H99kwxIbZ11goCG5KWPOUP98JzcsFhJmt"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <link href="/css/style.css" rel="stylesheet">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="192x192" href="plug-192.png">
+</head>
+<body>
+<div id="body" style="visibility: hidden">
+    <div style="height: 5vh">
+        <span style="height: 100%; width: 20%; display: inline-block; background-color: rgba(0, 128, 0, 0.9)"></span><span style="height: 100%; width: 20%; display: inline-block; background-color: rgba(0, 96, 0, 0.9)"></span><span style="height: 100%; width: 20%; display: inline-block; background-color: rgba(0, 64, 0, 0.9)"></span><span style="height: 100%; width: 20%; display: inline-block; background-color: rgba(0, 32, 0, 0.9)"></span><span style="height: 100%; width: 20%; display: inline-block; background-color: rgba(0, 0, 0, 0.9)"></span>
+    </div>
+    <div id="jumbotron" style="padding-top: 5vh; padding-bottom: 5vh; margin-bottom: 5vh; position: relative; height: 95vh; width: 100%; padding-left: 8vw; padding-right: 8vw">
+        <div class="semi-bold" style="position: absolute; right: 5vh; bottom: 10vh; font-size: 4vmin;"><p><a href="#info" id="info-link">Mere info ↓</a></p></div>
+        <p class="semi-bold" style="font-size: 6vmin">Lige nu er strømmen</p>
+        <div style="text-align: center; padding-bottom: 6vh;">
+            <div class="semi-bold" id="intensity-level" style="font-size: 14vmin"></div>
+            <span style="font-size: 4vmin">(<span id="current-intensity"></span>&nbsp;g&nbsp;CO<sub>2</sub>/kWh over <span id="de-den-lower">den</span> næste <span id="hours">time</span>)</span>
+        </div>
+        <span class="semi-bold" style="font-size: 5vmin"><span id="de-den-upper">Den</span> grønneste
+            <span class="semi-bold btn-group">
+                <button type="button" id="dropdown-toggle-period" class="btn btn-transparent dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-value="1">
                     time
-                  </button>
-                  <div class="dropdown-menu">
+                </button>
+                <div class="dropdown-menu">
                     <a class="dropdown-item" data-value="1" href="#">time</a>
                     <a class="dropdown-item" data-value="2" href="#">2 timer</a>
                     <a class="dropdown-item" data-value="3" href="#">3 timer</a>
                     <a class="dropdown-item" data-value="4" href="#">4 timer</a>
                     <a class="dropdown-item" data-value="5" href="#">5 timer</a>
                     <a class="dropdown-item" data-value="6" href="#">6 timer</a>
-                  </div>
-                </span>
-                inden for de kommende
-                <span class="btn-group">
-                  <button type="button" id="dropdown-toggle-horizon" class="btn btn-transparent dropdown-toggle"
-                          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-value="12">
+                </div>
+            </span>
+            inden for de kommende
+            <span class="btn-group">
+                <button type="button" id="dropdown-toggle-horizon" class="btn btn-transparent dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-value="12">
                     12 timer
-                  </button>
-                  <div class="dropdown-menu">
+                </button>
+                <div class="dropdown-menu">
                     <a class="dropdown-item" data-value="6" href="#">6 timer</a>
                     <a class="dropdown-item" id="dropdown-12-hours" data-value="12" href="#">12 timer</a>
                     <a class="dropdown-item" id="dropdown-24-hours" data-value="24" href="#">24 timer</a>
-                  </div>
-                </span> er </span>
-              <div style="text-align: center">
-                  <div class="semi-bold" style="font-size: 11vmin">
-                      <span id="best-hour-start"></span>&nbsp;&ndash;&nbsp;<span id="best-hour-end"></span>
-                  </div>
-                  <span style="font-size: 4vmin">(<span id="best-hour-intensity"></span>&nbsp;g&nbsp;CO<sub>2</sub>/kWh, <span id="improvement"></span> lavere end nu)</span>
-              </div>
-            </div>
-            <div id="info" class="container">
-                <div class="row">
-                    <div class="col-sm-12 col-lg-6 border-right">
-                        <p>Seneste opdatering: <span id="latest-data"></span></p>
-                        <div style="width: 88%;" id="vis"></div>
-                    </div>
-                    <div class="col-sm-12 col-lg-6" style="padding-left: 25px;">
-                        <h2>Hvad betyder det?</h2>
-                        <p>
-                            Farverne fortæller, hvor meget klimaet belastes af danskernes elforbrug netop nu. Hvor grøn
-                            den danske strøm er skifter fra minut til minut, afhængigt
-                            af blandt andet vores totale strømforbrug og strømmens sammensætning, altså f.eks. i hvor stort et omfang vind- og
-                            solenergi bidrager til vores strømproduktion. Det kan vi fange med udledningsintensiteten, der
-                            fortæller, hvor mange gram CO<sub>2</sub>, der udledes hver gang vi bruger en kilowatt-time.
-                            Hvis intensiteten bliver dobbelt så høj, vil den samme vaskemaskinetur altså være skyld
-                            i den dobbelte CO<sub>2</sub>-udledning.
-                        </p>
-                        <p>
-                            På en almindelig dag kan intensiteten svinge med en faktor fire, så alene ved at flytte vores
-                            eget forbrug, så vi sørger for at bruge strøm, når den er grønnest, kan vi gøre en stor forskel.
-                            Vi kan nok ikke være så fleksible omkring,
-                            hvornår vi tænder lyset derhjemme, men skal vi vaske tøj, tørretumble, vaske op, bage kage,
-                            eller oplade elbilen, eller hvis vi har andre kortvarige energitunge opgaver derhjemme eller
-                            på arbejdspladsen og vi har mulighed for at være fleksible, kan vi bruge prognoserne til at
-                            vurdere, om det vil give mening at vente et par timer eller en halv dag.
-                        </p>
-                        <p>
-                            En let måde at få informationen lige ved hånden på, er at tilføje siden her til en smart phones
-                            eller tablets home screen (<a href="https://www.howtogeek.com/196087/how-to-add-websites-to-the-home-screen-on-any-smartphone-or-tablet/">instruktioner</a>).
-                        </p>
-                        <h2>Hvordan er det beregnet?</h2>
-                        <p>
-                            Værdierne tages fra Energinets <a href="https://www.energidataservice.dk/">Energi Data
-                            Service</a>, hvis prognoser er baseret på produktionsplaner for de danske kraftværker. For
-                            yderligere information, se <a href="https://energinet.dk/-/media/94DFF11261FD4F2A936A7AFBCAA6996E.pdf">
-                            Energinets notater</a>. Farvekodningen indikerer kvintilerne af intensiteter, baseret på
-                            data siden 2017, uden hensynstagen til periodicitet eller trends. Mere præcist kalder vi strømmen
-                            <ul>
-                                <li><i>meget grøn</i>, når intensiteten er under 55 g CO<sub>2</sub>/kWh,</li>
-                                <li><i>grøn</i>, når den er under 95 g CO<sub>2</sub>/kWh,</li>
-                                <li><i>både grøn og sort</i>, når den er under 140 g CO<sub>2</sub>/kWh,</li>
-                                <li><i>primært sort</i>, når den er under 209 g CO<sub>2</sub>/kWh,</li>
-                                <li><i>kulsort</i>, når den er over 209 g CO<sub>2</sub>/kWh.</li>
-                            </ul>
-                        </p>
-                        <h2>Referencer</h2>
-                        <ul>
-                            <li><a href="https://energinet.dk/El/Gron-el/Miljoedeklarationer">Energinets miljødeklarationer</a></li>
-                            <li><a href="https://en.wikipedia.org/wiki/Emission_intensity">Wikipedia</a></li>
-                            <li><a href="https://github.com/fuglede/groenstroem-web/issues">Rapporter fejl</a></li>
-                        </ul>
-                    </div>
                 </div>
+            </span> er </span>
+        <div style="text-align: center">
+            <div class="semi-bold" style="font-size: 11vmin">
+                <span id="best-hour-start"></span>&nbsp;&ndash;&nbsp;<span id="best-hour-end"></span>
+            </div>
+            <span style="font-size: 4vmin">(<span id="best-hour-intensity"></span>&nbsp;g&nbsp;CO<sub>2</sub>/kWh, <span id="improvement"></span> lavere end nu)</span>
+        </div>
+    </div>
+    <div id="info" class="container">
+        <div class="row">
+            <div class="col-sm-12 col-lg-6 border-right">
+                <p>Seneste opdatering: <span id="latest-data"></span></p>
+                <div style="width: 88%;" id="vis"></div>
+            </div>
+            <div class="col-sm-12 col-lg-6" style="padding-left: 25px;">
+                <h2>Hvad betyder det?</h2>
+                <p>
+                    Farverne fortæller, hvor meget klimaet belastes af danskernes elforbrug netop nu. Hvor grøn
+                    den danske strøm er skifter fra minut til minut, afhængigt
+                    af blandt andet vores totale strømforbrug og strømmens sammensætning, altså f.eks. i hvor stort et omfang vind- og
+                    solenergi bidrager til vores strømproduktion. Det kan vi fange med udledningsintensiteten, der
+                    fortæller, hvor mange gram CO<sub>2</sub>, der udledes hver gang vi bruger en kilowatt-time.
+                    Hvis intensiteten bliver dobbelt så høj, vil den samme vaskemaskinetur altså være skyld
+                    i den dobbelte CO<sub>2</sub>-udledning.
+                </p>
+                <p>
+                    På en almindelig dag kan intensiteten svinge med en faktor fire, så alene ved at flytte vores
+                    eget forbrug, så vi sørger for at bruge strøm, når den er grønnest, kan vi gøre en stor forskel.
+                    Vi kan nok ikke være så fleksible omkring,
+                    hvornår vi tænder lyset derhjemme, men skal vi vaske tøj, tørretumble, vaske op, bage kage,
+                    eller oplade elbilen, eller hvis vi har andre kortvarige energitunge opgaver derhjemme eller
+                    på arbejdspladsen og vi har mulighed for at være fleksible, kan vi bruge prognoserne til at
+                    vurdere, om det vil give mening at vente et par timer eller en halv dag.
+                </p>
+                <p>
+                    En let måde at få informationen lige ved hånden på, er at tilføje siden her til en smart phones
+                    eller tablets home screen (<a href="https://www.howtogeek.com/196087/how-to-add-websites-to-the-home-screen-on-any-smartphone-or-tablet/">instruktioner</a>).
+                </p>
+                <h2>Hvordan er det beregnet?</h2>
+                <p>
+                    Værdierne tages fra Energinets <a href="https://www.energidataservice.dk/">Energi Data
+                    Service</a>, hvis prognoser er baseret på produktionsplaner for de danske kraftværker. For
+                    yderligere information, se <a href="https://energinet.dk/-/media/94DFF11261FD4F2A936A7AFBCAA6996E.pdf">
+                    Energinets notater</a>. Farvekodningen indikerer kvintilerne af intensiteter, baseret på
+                    data siden 2017, uden hensynstagen til periodicitet eller trends. Mere præcist kalder vi strømmen
+                    <ul>
+                        <li><i>meget grøn</i>, når intensiteten er under 55 g CO<sub>2</sub>/kWh,</li>
+                        <li><i>grøn</i>, når den er under 95 g CO<sub>2</sub>/kWh,</li>
+                        <li><i>både grøn og sort</i>, når den er under 140 g CO<sub>2</sub>/kWh,</li>
+                        <li><i>primært sort</i>, når den er under 209 g CO<sub>2</sub>/kWh,</li>
+                        <li><i>kulsort</i>, når den er over 209 g CO<sub>2</sub>/kWh.</li>
+                    </ul>
+                </p>
+                <h2>Referencer</h2>
+                <ul>
+                    <li><a href="https://energinet.dk/El/Gron-el/Miljoedeklarationer">Energinets miljødeklarationer</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Emission_intensity">Wikipedia</a></li>
+                    <li><a href="https://github.com/fuglede/groenstroem-web/issues">Rapporter fejl</a></li>
+                </ul>
             </div>
         </div>
-        <script src="/js/main.js"></script>
-    </body>
+    </div>
+</div>
+<script src="/js/main.js"></script>
+</body>
 </html>
