@@ -18,11 +18,11 @@ class EmissionData:
         data_forecast = requests.get(
             f'{base_url}?resource_id=co2emisprog&fields={fields}&sort={sort}&limit={limit}&filters={filters}').json()
         df_actual = pd.DataFrame(data['result']['records'])[::-1]
-        df_actual['Minutes5DK'] = pd.to_datetime(df_actual.Minutes5DK)
+        df_actual['Minutes5DK'] = pd.to_datetime(df_actual.Minutes5DK).dt.tz_localize('Europe/Copenhagen')
         df_actual['Minutes5UTC'] = pd.to_datetime(df_actual.Minutes5UTC)
         df_actual['Type'] = 'Målt'
         df_forecast = pd.DataFrame(data_forecast['result']['records'])[::-1]
-        df_forecast['Minutes5DK'] = pd.to_datetime(df_forecast.Minutes5DK)
+        df_forecast['Minutes5DK'] = pd.to_datetime(df_forecast.Minutes5DK).dt.tz_localize('Europe/Copenhagen')
         df_forecast['Minutes5UTC'] = pd.to_datetime(df_forecast.Minutes5UTC)
         df_forecast['Type'] = 'Prognose'
         df_forecast = df_forecast[df_forecast.Minutes5DK >= df_actual.Minutes5DK.max()]
@@ -35,7 +35,7 @@ class EmissionData:
         self.df_forecast = df_forecast
         self.forecast_length_hours = math.ceil(len(df_forecast) / 12)
         self.df = pd.concat([df_actual, df_forecast])
-        self.df['Minutes5DK'] = self.df.Minutes5DK.dt.tz_localize('Europe/Copenhagen')
+        self.df['Minutes5DK'] = self.df.Minutes5DK
         self.now_utc_int = df_actual.Minutes5UTC.astype(int).max() / 1000000
         self.min_time = self.df.Minutes5DK.min()
         self.max_time = self.df.Minutes5DK.max()
