@@ -44,6 +44,8 @@ $(document).ready(function() {
     setInterval(updateAll, 5*60*1000);
 });
 
+$(window).on('focus', function() { updateAll(); });
+
 $(".dropdown-menu>a").on('click', function() {
     var selText = $(this).text();
     var dropdownToggle = $(this).parent('.dropdown-menu').siblings('.dropdown-toggle')
