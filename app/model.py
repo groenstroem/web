@@ -65,6 +65,8 @@ class EmissionData:
             alt.X('Minutes5DK:T', title=''),
             alt.Y('CO2Emission:Q', title='Udledningsintensitet [g CO2/kWh]', scale=alt.Scale(domain=(0, height))),
             alt.Color('Type:N'),
+            tooltip=[alt.Tooltip('Minutes5DK:T', title='Tid', format='%Y-%m-%d %H:%M'),
+                     alt.Tooltip('CO2Emission:Q', title='Intensitet [g CO2/kWh]')]
         )
 
         today_line = alt.Chart(today).mark_rule(clip=True).encode(x='x:T', y='y:Q')
@@ -75,6 +77,7 @@ class EmissionData:
         def make_rect(data, color):
             return alt.Chart(data).mark_rect(color=color, opacity=opacity).encode(
                 x=alt.X('x:T', scale=alt.Scale(domain=interval.ref())), x2='x2:T', y='y:Q', y2='y2:Q')
+
         rect_charts = [make_rect(data, color)
                        for data, color in zip(rects, ['green', 'lightgreen', 'yellow', 'lightcoral', 'red'])]
         combined_rect_chart = rect_charts[0] + rect_charts[1] + rect_charts[2] + rect_charts[3] + rect_charts[4]
@@ -83,8 +86,14 @@ class EmissionData:
                             axis=alt.Axis(format='%H'),
                             title='',
                             scale=alt.Scale(domain=interval.ref())))
+
+        # Add a dummy selection on the top plot, since otherwise tooltips will never show up, due to a bug in Vega-Lite:
+        # https://github.com/vega/vega-lite/issues/6003
+        top = top.add_selection(alt.selection_single())
+
         chart = top + today_chart + combined_rect_chart
         view = base.properties(width='container', height=50, selection=interval).encode(
+            x=alt.X('Minutes5DK:T', axis=alt.Axis(format='%d/%m %H:%M'), title=''),
             y=alt.Y('CO2Emission:Q', title='', scale=alt.Scale(domain=(0, height))))
 
         full_chart = chart & (view + today_line)
