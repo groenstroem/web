@@ -23,13 +23,23 @@ function updateEmissionIntensity() {
         $("#body").css('visibility', 'visible');
         $(".btn-transparent").css('color', data["intensity-level-fgcolor"]);
         // A priori, we allow selections of 6, 12, and 24 hours in the horizon dropdown, but if
-        // our current forecast is shorter than that, we update the values accordingly.
+        // our current forecast is shorter than that, we update the values accordingly. Note that
+        // we do not have to update the actual data properties themselves, as the API will simply
+        // ignore the fact that the desired horizon might be longer than the available forecast.
         var length = data["forecast-length-hours"];
+        var selectedHorizon = $('#dropdown-toggle-horizon').data('value');
         if (length <= 12) {
-            $("#dropdown-12-hours").html(length + " timer");
+            var newText = length + " timer";
+            $("#dropdown-12-hours").html(newText);
             $("#dropdown-24-hours").css('visibility', 'collapse');
+            if (selectedHorizon == 12) {
+                $('#dropdown-toggle-horizon').html(newText);
+            }
         } else if (length < 24) {
             $("#dropdown-24-hours").html(length + " timer");
+            if (selectedHorizon == 24) {
+                $('#dropdown-toggle-horizon').html(newText);
+            }
         }
 
         // TODO: Rather than generating the plot from scratch, it would make sense to keep the
