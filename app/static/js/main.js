@@ -64,6 +64,8 @@ $(document).ready(function() {
     // Determine which "Add to home screen" guides to display based on user agents.
     var ua = navigator.userAgent.toLowerCase();
     var isiOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+    if (!isiOS && ua.indexOf('android') == -1)
+        $("#not-android-ios-guide").css('display', 'inherit');
     if (ua.indexOf('firefox') > -1 && ua.indexOf('android') > -1)
         $("#firefox-android-guide").css('display', 'inherit');
     if (ua.indexOf('chrome') > -1 && ua.indexOf('android') > -1)
