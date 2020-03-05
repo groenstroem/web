@@ -60,6 +60,7 @@ $(document).ready(function() {
     // Immediately set the page data, and refresh it every five minutes.
     updateAll();
     setInterval(updateAll, 5*60*1000);
+    registerServiceWorker();
 
     // Determine which "Add to home screen" guides to display based on user agents.
     var ua = navigator.userAgent.toLowerCase();
@@ -76,7 +77,60 @@ $(document).ready(function() {
         $("#chrome-ios-guide").css('display', 'inherit');
     if (ua.indexOf('safari') > -1 && isiOS)
         $("#safari-ios-guide").css('display', 'inherit');
+    if (ua.indexOf('firefox') > -1 || ua.indexOf('chrome') > -1) {
+        $("#settings").css('display', 'inherit');
+    }
+
+    if (navigator && navigator.serviceWorker) {
+        // Ensure that the "Få daglig opdatering" checkbox is disabled, if we are not
+        // currently subscribing to push messages
+        navigator.serviceWorker.ready.then(function (reg) {
+            reg.pushManager.getSubscription().then(function(sub) {
+                if (sub == null) {
+                    $('#toggle-notification').prop('checked', sub != null).change();
+                }
+            });
+        });
+    
+    }
 });
+
+
+$('#toggle-notification').change(function() {
+    if ($(this).prop('checked'))
+    {
+        window.Notification.requestPermission().then(function (permission) {
+            console.log(permission)
+            if (permission === 'granted') {
+                const applicationServerKey = urlB64ToUint8Array(
+                    'BOhO7gueTjZ60EP0lxuR2-kmq1WqbenyPgq1ZWvINPG86uh8C0ssn5XM72ranRIrI1r0lNiK7GV4rIaUcj5HJns'
+                )
+                const options = { applicationServerKey, userVisibleOnly: true }
+                console.log(options)
+                navigator.serviceWorker.ready.then(function(reg)
+                {
+                    reg.pushManager.subscribe(options).then(function(subscription) {
+                        saveSubscription(subscription).then(function(response) {
+                            console.log(response)
+                        })
+                    })
+                })
+            }
+        })
+    } else {
+        navigator.serviceWorker.ready.then(function(reg) {
+            reg.pushManager.getSubscription().then(function(subscription) {
+                if (subscription) {
+                    subscription.unsubscribe().then(function(successful) {
+                        removeSubscription(subscription)
+                    }).catch(function(e) {
+                        // Unsubscription failed
+                    })
+                }
+            })        
+        });
+    }
+}) 
 
 // Besides updating page data every five minutes, we also update it on the window 'focus' event. This
 // is necessary to ensure updates when users have added the page to their phone/tablet home screen, in
@@ -107,3 +161,50 @@ $(".dropdown-menu>a").on('click', function() {
     }
     updateGreenestPeriod();
 });
+
+
+function registerServiceWorker() {
+    if (navigator && navigator.serviceWorker) {
+        navigator.serviceWorker
+            .register('/sw.js')
+            .then(registration => {
+                console.log("Scope", registration.scope)
+            })
+            .catch(e => console.error("ServiceWorker failed: ", e))
+    }
+}
+
+// urlB64ToUint8Array is a magic function that will encode the base64 public key
+// to Array buffer which is needed by the subscription option
+const urlB64ToUint8Array = base64String => {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/')
+    const rawData = atob(base64)
+    const outputArray = new Uint8Array(rawData.length)
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i)
+    }
+    return outputArray
+  }
+
+const saveSubscription = async subscription => {
+    const response = await fetch('/api/v1/save-subscription', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(subscription),
+    })
+    return response.json()
+}
+
+const removeSubscription = async subscription => {
+    const response = await fetch('/api/v1/remove-subscription', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(subscription),
+    })
+    return response.json()
+}

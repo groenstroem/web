@@ -1,3 +1,5 @@
+import os
+import sqlite3
 import time
 import warnings
 # We disable FutureWarnings caused by Pandas 0.25.3 instructing us to replace our msgpack based deserialization with
@@ -6,10 +8,10 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from cachelib import RedisCache
-from flask import Flask
+from flask import Flask, request
 import pandas as pd
 
-from .model import build_model, best_hour
+from .model import build_model, best_hour, overview_next_day
 
 
 app = Flask(__name__,
@@ -23,6 +25,23 @@ cache = RedisCache('redis')
 model_identifier = 'emission-intensity-model'
 generating_identifier = 'emission-intensity-model-generating'
 forecast_identifier = 'emission-intensity-forecast'
+
+
+def execute_sql(sql, args):
+    try:
+        conn = sqlite3.connect('/data/subs.db')
+        c = conn.cursor()
+        c.execute(sql, args)
+        conn.commit()
+    finally:
+        if conn:
+            conn.close
+
+
+db_exists = os.path.exists('/data/subs.db')
+
+if not db_exists:
+    execute_sql('CREATE TABLE subs (sub text)', [])
 
 
 def wait_until_not_generating():
@@ -81,3 +100,25 @@ def greenest_hour(period, horizon):
         return best_hour(pd.read_msgpack(forecast), period, horizon)
     _, forecast = update_data()
     return best_hour(forecast, period, horizon)
+
+@app.route('/api/v1/next-day')
+def next_day():
+    wait_until_not_generating()
+    forecast = cache.get(forecast_identifier)
+    if forecast:
+        return overview_next_day(pd.read_msgpack(forecast))
+    _, forecast = update_data()
+    return overview_next_day(forecast)
+
+@app.route('/api/v1/save-subscription', methods=['POST'])
+def save_subscription():
+    data = request.data.decode('ascii')
+    execute_sql('INSERT INTO subs (sub) VALUES (?)', (data,))
+    return {'message': 'success'}
+
+
+@app.route('/api/v1/remove-subscription', methods=['POST'])
+def remove_subscription():
+    data = request.data.decode('ascii')
+    execute_sql('DELETE FROM subs WHERE sub = ?', (data,))
+    return {'message': 'success'}

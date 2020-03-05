@@ -25,6 +25,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
           crossorigin="anonymous">
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <link href="/css/style.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <!-- We provide a web app manifest to improve "Add to Home Screen" UX but also explicitly provide an app icon for
@@ -81,6 +83,9 @@
     <div id="info" class="container">
         <div class="row">
             <div class="col-sm-12 col-lg-6 border-right">
+                <div class="semi-bold" id="settings" style="display: none;">
+                    <p>Få dagligt overblik som pushbesked (beta): <input id="toggle-notification" type="checkbox" checked data-on="Ja" data-off="Nej" data-toggle="toggle" data-size="small" data-onstyle="success" data-offstyle="warning"></p>
+                </div>
                 <p>Seneste opdatering: <span id="latest-data"></span></p>
                 <div style="width: 88%;" id="vis"></div>
             </div>
@@ -88,7 +93,7 @@
                 <h2>Tip</h2>
                 <p>
                     En let måde at få informationen lige ved hånden på, er at besøge denne side på din smartphone
-                    eller tablet og derefter tilføje siden til dens <span class="semi-bold">home screen</span>.
+                    eller tablet og derefter tilføje siden til din <span class="semi-bold">home screen</span>.
                 </p>
                 <p id="not-android-ios-guide" style="display: none;">
                     Besøg siden på din smartphone eller tablet for at få videre instruktioner.
@@ -110,7 +115,7 @@
                     I Safari kan du gøre det ved trykke på firkanten med pilen, der er i midten af bunden af skærmen og
                     herefter finde "Add to Home Screen"-ikonet.
                 </p>
-                <h2>Hvad betyder det?</h2>
+                <h2>Hvad betyder farverne?</h2>
                 <p>
                     Farverne fortæller, hvor meget klimaet belastes af danskernes elforbrug netop nu. Hvor grøn
                     den danske strøm er skifter fra minut til minut, afhængigt

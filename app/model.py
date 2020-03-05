@@ -115,12 +115,18 @@ class EmissionData:
 
 
 def get_greenest(df_forecast, period: int, horizon: int):
-    """Given a data frame of forecast data, determines the greenest period of a given length in the given horizon."""
+    return get_extreme(df_forecast, period, horizon, False)
+
+def get_blackest(df_forecast, period: int, horizon: int):
+    return get_extreme(df_forecast, period, horizon, True)
+
+def get_extreme(df_forecast, period: int, horizon: int, idxmax):
+    """Given a data frame of forecast data, determines the greenest/blackest period of a given length in the given horizon."""
     df_next_day = df_forecast[df_forecast.Minutes5UTC < df_forecast.Minutes5UTC.min() + pd.Timedelta(f'{horizon}H')]
     min_periods = period * 12
     rolling = df_next_day.set_index('Minutes5DK').CO2Emission\
                          .rolling(f'{period}H', min_periods=min_periods).mean()[min_periods-1:]
-    lowest = rolling.idxmin()
+    lowest = rolling.idxmax() if idxmax else rolling.idxmin()
     lowest_mean = rolling.loc[lowest]
     lowest_interval_start = lowest - pd.Timedelta(f'{period}H') + pd.Timedelta('5m')
     lowest_interval_end = lowest + pd.Timedelta('5m')
@@ -173,3 +179,31 @@ def best_hour(df_forecast, period, horizon):
             'best-hour-start': best_hour_start,
             'best-hour-end': best_hour_end,
             'best-hour-intensity': best_hour_intensity}
+
+def overview_next_day(df_forecast):
+    mean = df_forecast[df_forecast.Minutes5UTC < df_forecast.Minutes5UTC.min() + pd.Timedelta('1D')].CO2Emission.mean()
+    lowest_mean, lowest_interval_start, lowest_interval_end = get_greenest(df_forecast, 1, 24)
+    best_hour_start = f'{lowest_interval_start.strftime("%H:%M")}'
+    best_hour_end = f'{lowest_interval_end.strftime("%H:%M")}'
+    best_hour_intensity = int(round(lowest_mean))
+    highest_mean, highest_interval_start, highest_interval_end = get_blackest(df_forecast, 1, 24)
+    worst_hour_start = f'{highest_interval_start.strftime("%H:%M")}'
+    worst_hour_end = f'{highest_interval_end.strftime("%H:%M")}'
+    worst_hour_intensity = int(round(highest_mean))
+
+    # TODO: Figure out quintiles from daily averages
+    q = [0, 55, 95, 140, 209, 1000]
+    if mean < q[1]:
+        general = 'meget grøn'
+    elif mean < q[2]:
+        general = 'grøn'
+    elif mean < q[3]:
+        general = 'både grøn og sort'
+    elif mean < q[4]:
+        general = 'sort'
+    else:
+        general = 'kulsort'
+    data = f'Strømmen er de næste 24 timer generelt {general} ({int(round(mean))} g CO2/kWh).\n' +\
+        f'Grønnest: {best_hour_start}-{best_hour_end} ({best_hour_intensity} g CO2/kWh).\n' +\
+        f'Sortest: {worst_hour_start}-{worst_hour_end} ({worst_hour_intensity} g CO2/kWh).'
+    return data    
