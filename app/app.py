@@ -14,6 +14,7 @@ import pandas as pd
 import pywebpush
 
 from .model import build_model, best_hour, overview_next_day
+from . import push
 
 
 app = Flask(__name__,
@@ -27,23 +28,6 @@ cache = RedisCache('redis')
 model_identifier = 'emission-intensity-model'
 generating_identifier = 'emission-intensity-model-generating'
 forecast_identifier = 'emission-intensity-forecast'
-
-
-def execute_sql(sql, args):
-    try:
-        conn = sqlite3.connect('/data/subs.db')
-        c = conn.cursor()
-        c.execute(sql, args)
-        conn.commit()
-    finally:
-        if conn:
-            conn.close
-
-
-db_exists = os.path.exists('/data/subs.db')
-
-if not db_exists:
-    execute_sql('CREATE TABLE subs (sub text)', [])
 
 
 def wait_until_not_generating():
@@ -103,6 +87,7 @@ def greenest_hour(period, horizon):
     _, forecast = update_data()
     return best_hour(forecast, period, horizon)
 
+
 @app.route('/api/v1/next-day')
 def next_day():
     wait_until_not_generating()
@@ -112,30 +97,22 @@ def next_day():
     _, forecast = update_data()
     return overview_next_day(forecast)
 
+
 @app.route('/api/v1/save-subscription', methods=['POST'])
 def save_subscription():
     try:
-        data = request.data.decode('ascii')
-        _validate_subscription_info(data)
-        execute_sql('INSERT INTO subs (sub) VALUES (?)', (data,))
+        push.save_subscription(request.data.decode('ascii'))
         return {'success': True}
-    except:
+    except Exception as e:
+        print(e)
         return {'success': False}
 
 
 @app.route('/api/v1/remove-subscription', methods=['POST'])
 def remove_subscription():
     try:
-        data = request.data.decode('ascii')
-        _validate_subscription_info(data)
-        execute_sql('DELETE FROM subs WHERE sub = ?', (data,))
+        push.remove_subscription(request.data.decode('ascii'))
         return {'success': True}
-    except:
+    except Exception as e:
+        print(e)
         return {'success': False}
-
-
-def _validate_subscription_info(data):
-    """Checks whether or not a string representing subscription info is valid"""
-    subscription_info = json.loads(data)
-    # We exploit the fact that pywebpush.WebPusher validates the data on initialization
-    pywebpush.WebPusher(subscription_info)
