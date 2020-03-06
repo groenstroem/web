@@ -1,6 +1,7 @@
 """Contains the logic necessary to turn Energinet's data into pandas dataframes."""
 from dataclasses import dataclass
 
+import numpy as np
 import pandas as pd
 import requests
 
@@ -58,7 +59,7 @@ class EmissionDataQuintiles():
         # We want three years of data or, ignoring leap years, (60/5) * 24 * 365 * 3 = 315360 data points.
         limit = 315360
         data = requests.get(
-            f'{base_url}?resource_id={HISTORY_RESOURCE}&fields={FIELDS}&sort={SORT}&limit={limit}').json()
+            f'{BASE_URL}?resource_id={HISTORY_RESOURCE}&fields={FIELDS}&sort={SORT}&limit={limit}').json()
         values = np.array([x['CO2Emission'] for x in data['result']['records']])
         quintiles_all = np.percentile(values, [20, 40, 60, 80])
         daily_averages = values.reshape(24, limit//24).mean(0)
