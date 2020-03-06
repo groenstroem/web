@@ -2,6 +2,7 @@
 
 In particular, this provides all post-processing of Energinet's data.
 """
+from bisect import bisect
 import math
 
 import altair as alt
@@ -125,16 +126,7 @@ def build_model():
     latest_data = model.now.strftime('%Y-%m-%d %H:%M')
     current_emission = model.current_emission
     quintiles = model.quintiles
-    if current_emission < quintiles[1]:
-        index = 0
-    elif current_emission < quintiles[2]:
-        index = 1
-    elif current_emission < quintiles[3]:
-        index = 2
-    elif current_emission < quintiles[4]:
-        index = 3
-    else:
-        index = 4
+    index = bisect(quintiles, current_emission) - 1
     bg_colors = [f'rgba(0, {i}, 0, 0.9)' for i in range(128, -32, -32)]
     border_colors = [f'rgba(0, {i+64}, 0, 0.9)' for i in range(128, 0, -32)] + ['#333']
     fg_colors = ['#FFF', '#FFF', '#EEE', '#EEE', '#EEE']
@@ -179,17 +171,10 @@ def overview_next_day(df_forecast):
     worst_hour_intensity = int(round(highest_mean))
 
     q = EmissionIntensityModel.quintiles
-    if mean < q[1]:
-        general = 'meget grøn'
-    elif mean < q[2]:
-        general = 'grøn'
-    elif mean < q[3]:
-        general = 'både grøn og sort'
-    elif mean < q[4]:
-        general = 'sort'
-    else:
-        general = 'kulsort'
-    data = f'Strømmen er de næste 24 timer generelt {general} ({int(round(mean))} g CO2/kWh).\n' +\
+    colors = ['meget grøn', 'grøn', 'både grøn og sort', 'ret sort', 'kulsort']
+    index = bisect(q, mean) - 1
+    general_color = colors[index]
+    data = f'Strømmen er de næste 24 timer generelt {general_color} ({int(round(mean))} g CO2/kWh).\n' +\
         f'Grønnest: {best_hour_start}-{best_hour_end} ({best_hour_intensity} g CO2/kWh).\n' +\
         f'Sortest: {worst_hour_start}-{worst_hour_end} ({worst_hour_intensity} g CO2/kWh).'
     return data
