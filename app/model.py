@@ -1,46 +1,27 @@
+"""Contains the model (in the MVC sense) of the data presented in the web app.
+
+In particular, this provides all post-processing of Energinet's data.
+"""
 import math
 
 import altair as alt
 import pandas as pd
 import requests
 
+from .data import EmissionData
 
-class EmissionData:
+
+class EmissionIntensityModel:
 
     def __init__(self):
-        base_url = 'https://api.energidataservice.dk/datastore_search'
-        fields = 'Minutes5UTC,Minutes5DK,CO2Emission'
-        sort = 'Minutes5UTC desc'
-        limit = 500
-        filters = '{"PriceArea": "DK2"}'
-        data = requests.get(
-            f'{base_url}?resource_id=co2emis&fields={fields}&sort={sort}&limit={limit}&filters={filters}').json()
-        data_forecast = requests.get(
-            f'{base_url}?resource_id=co2emisprog&fields={fields}&sort={sort}&limit={limit}&filters={filters}').json()
-        df_actual = pd.DataFrame(data['result']['records'])[::-1]
-        df_actual['Minutes5DK'] = pd.to_datetime(df_actual.Minutes5DK).dt.tz_localize('Europe/Copenhagen')
-        df_actual['Minutes5UTC'] = pd.to_datetime(df_actual.Minutes5UTC)
-        df_actual['Type'] = 'Målt'
-        df_forecast = pd.DataFrame(data_forecast['result']['records'])[::-1]
-        df_forecast['Minutes5DK'] = pd.to_datetime(df_forecast.Minutes5DK).dt.tz_localize('Europe/Copenhagen')
-        df_forecast['Minutes5UTC'] = pd.to_datetime(df_forecast.Minutes5UTC)
-        df_forecast['Type'] = 'Prognose'
-        df_forecast = df_forecast[df_forecast.Minutes5DK >= df_actual.Minutes5DK.max()]
-        # Replace forecasted value for current time with actual time, mainly to make it simpler to produce a connected
-        # graph below.
-        df_forecast.iloc[0] = [df_actual.Minutes5UTC.max(),
-                               df_actual.Minutes5DK.max(),
-                               df_actual.iloc[-1]['CO2Emission'],
-                               'Prognose']
-        self.df_forecast = df_forecast
-        self.forecast_length_hours = math.ceil(len(df_forecast) / 12)
-        self.df = pd.concat([df_actual, df_forecast])
-        self.df['Minutes5DK'] = self.df.Minutes5DK
-        self.now_utc_int = df_actual.Minutes5UTC.astype(int).max() / 1000000
+        self.data = EmissionData.build()
+        self.forecast_length_hours = math.ceil(len(self.data.df_forecast) / 12)
+        self.df = pd.concat([self.data.df_history, self.data.df_forecast])
+        self.now_utc_int = self.data.df_history.Minutes5UTC.astype(int).max() / 1000000
         self.min_time = self.df.Minutes5DK.min()
         self.max_time = self.df.Minutes5DK.max()
-        self.now = df_actual.Minutes5DK.max()
-        self.current_emission = int(df_forecast.iloc[0].CO2Emission)
+        self.now = self.data.df_history.Minutes5DK.max()
+        self.current_emission = int(self.data.df_forecast.iloc[0].CO2Emission)
 
     quintiles = [0, 55, 95, 140, 209, 1000]  # Determined through analyses based on data since 2017
 
@@ -136,11 +117,11 @@ def get_extreme(df_forecast, period: int, horizon: int, idxmax):
 
 
 def build_model():
-    data = EmissionData()
-    full_chart = data.plot()
-    latest_data = data.now.strftime('%Y-%m-%d %H:%M')
-    current_emission = data.current_emission
-    quintiles = data.quintiles
+    model = EmissionIntensityModel()
+    full_chart = model.plot()
+    latest_data = model.now.strftime('%Y-%m-%d %H:%M')
+    current_emission = model.current_emission
+    quintiles = model.quintiles
     if current_emission < quintiles[1]:
         index = 0
     elif current_emission < quintiles[2]:
@@ -159,10 +140,10 @@ def build_model():
                           'intensity-level-fgcolor': fg_colors[index],
                           'intensity-level-border-color': border_colors[index],
                           'intensity-level': levels[index],
-                          'forecast-length-hours': data.forecast_length_hours,
+                          'forecast-length-hours': model.forecast_length_hours,
                           'latest-data': latest_data,
                           'plot-data': full_chart.to_dict()}
-    return emission_intensity, data.df_forecast
+    return emission_intensity, model.data.df_forecast
 
 
 def current_period_emission(df_forecast, period):
