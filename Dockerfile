@@ -6,7 +6,7 @@ FROM python:3.7-slim
 # data frames, is still not possible.
 RUN apt-get update \
     && apt-get install -y gcc \
-    && pip install altair flask pandas==0.25.3 requests uwsgi cachelib redis
+    && pip install altair cachelib flask pandas==0.25.3 pywebpush redis requests uwsgi
 RUN mkdir /data
 WORKDIR /app
 COPY . .

@@ -1,3 +1,4 @@
+import json
 import os
 import sqlite3
 import time
@@ -10,6 +11,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 from cachelib import RedisCache
 from flask import Flask, request
 import pandas as pd
+import pywebpush
 
 from .model import build_model, best_hour, overview_next_day
 
@@ -112,13 +114,28 @@ def next_day():
 
 @app.route('/api/v1/save-subscription', methods=['POST'])
 def save_subscription():
-    data = request.data.decode('ascii')
-    execute_sql('INSERT INTO subs (sub) VALUES (?)', (data,))
-    return {'message': 'success'}
+    try:
+        data = request.data.decode('ascii')
+        _validate_subscription_info(data)
+        execute_sql('INSERT INTO subs (sub) VALUES (?)', (data,))
+        return {'success': True}
+    except:
+        return {'success': False}
 
 
 @app.route('/api/v1/remove-subscription', methods=['POST'])
 def remove_subscription():
-    data = request.data.decode('ascii')
-    execute_sql('DELETE FROM subs WHERE sub = ?', (data,))
-    return {'message': 'success'}
+    try:
+        data = request.data.decode('ascii')
+        _validate_subscription_info(data)
+        execute_sql('DELETE FROM subs WHERE sub = ?', (data,))
+        return {'success': True}
+    except:
+        return {'success': False}
+
+
+def _validate_subscription_info(data):
+    """Checks whether or not a string representing subscription info is valid"""
+    subscription_info = json.loads(data)
+    # We exploit the fact that pywebpush.WebPusher validates the data on initialization
+    pywebpush.WebPusher(subscription_info)
