@@ -117,11 +117,13 @@ class EmissionData:
 def get_greenest(df_forecast, period: int, horizon: int):
     return get_extreme(df_forecast, period, horizon, False)
 
+
 def get_blackest(df_forecast, period: int, horizon: int):
     return get_extreme(df_forecast, period, horizon, True)
 
+
 def get_extreme(df_forecast, period: int, horizon: int, idxmax):
-    """Given a data frame of forecast data, determines the greenest/blackest period of a given length in the given horizon."""
+    """Given forecast data, determines the greenest/blackest period of a given length in the given horizon."""
     df_next_day = df_forecast[df_forecast.Minutes5UTC < df_forecast.Minutes5UTC.min() + pd.Timedelta(f'{horizon}H')]
     min_periods = period * 12
     rolling = df_next_day.set_index('Minutes5DK').CO2Emission\
@@ -180,6 +182,7 @@ def best_hour(df_forecast, period, horizon):
             'best-hour-end': best_hour_end,
             'best-hour-intensity': best_hour_intensity}
 
+
 def overview_next_day(df_forecast):
     mean = df_forecast[df_forecast.Minutes5UTC < df_forecast.Minutes5UTC.min() + pd.Timedelta('1D')].CO2Emission.mean()
     lowest_mean, lowest_interval_start, lowest_interval_end = get_greenest(df_forecast, 1, 24)
@@ -206,4 +209,4 @@ def overview_next_day(df_forecast):
     data = f'Strømmen er de næste 24 timer generelt {general} ({int(round(mean))} g CO2/kWh).\n' +\
         f'Grønnest: {best_hour_start}-{best_hour_end} ({best_hour_intensity} g CO2/kWh).\n' +\
         f'Sortest: {worst_hour_start}-{worst_hour_end} ({worst_hour_intensity} g CO2/kWh).'
-    return data    
+    return data
