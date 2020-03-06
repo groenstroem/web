@@ -23,8 +23,11 @@ class EmissionIntensityModel:
         self.now = self.data.df_history.Minutes5DK.max()
         self.current_emission = int(self.data.df_forecast.iloc[0].CO2Emission)
 
-    quintiles = [0, 55, 95, 140, 209, 1000]  # Determined through analyses based on data since 2017
-
+    # Hardcoded quintiles of data distribution. These can be obtained through EmissionDataQuintiles,
+    # but doing so takes so long that we'll want to cache the result (and hardcoding them is easier
+    # than obtaining them from storage).
+    quintiles = [0, 68, 112, 158, 227, 1000]
+ 
     def plot(self):
         df_combined = self.df
         m = self.now_utc_int
@@ -175,8 +178,7 @@ def overview_next_day(df_forecast):
     worst_hour_end = f'{highest_interval_end.strftime("%H:%M")}'
     worst_hour_intensity = int(round(highest_mean))
 
-    # TODO: Figure out quintiles from daily averages
-    q = [0, 55, 95, 140, 209, 1000]
+    q = EmissionIntensityModel.quintiles
     if mean < q[1]:
         general = 'meget grøn'
     elif mean < q[2]:
