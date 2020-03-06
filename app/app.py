@@ -11,7 +11,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 from flask import Flask, request
 
 from .cache import get_forecast, get_model
-from .model import best_hour, overview_next_day
+from .model import best_period, overview_next_day
 from . import push
 
 
@@ -32,11 +32,18 @@ def current_emission_intensity():
 
 
 @app.route('/api/v1/greenest-period/<period>/<horizon>', methods=['GET'])
-def greenest_hour(period, horizon):
-    period = int(period)
-    horizon = int(horizon)
+def greenest_period(period, horizon):
+    try:
+        period = int(period)
+        horizon = int(horizon)
+    except ValueError:
+        return {'success': False, 'error': 'Given period or horizon was non-integral.'}
+    if period < 0 or period > 6:
+        return {'success': False, 'error': 'Period must be between 1 and 6.'}
+    if horizon < 6 or horizon > 72:
+        return {'success': False, 'error': 'Horizon must be between 1 and 72.'}
     forecast = get_forecast()
-    return best_hour(forecast, period, horizon)
+    return best_period(forecast, period, horizon)
 
 
 @app.route('/api/v1/next-day')

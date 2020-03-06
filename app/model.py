@@ -153,18 +153,18 @@ def current_period_emission(df_forecast, period):
     return int(round(df_forecast.iloc[:12*period].CO2Emission.mean()))
 
 
-def best_hour(df_forecast, period, horizon):
+def best_period(df_forecast, period, horizon):
     lowest_mean, lowest_interval_start, lowest_interval_end = get_greenest(df_forecast, period, horizon)
-    best_hour_start = f'{lowest_interval_start.strftime("%H:%M")}'
-    best_hour_end = f'{lowest_interval_end.strftime("%H:%M")}'
-    best_hour_intensity = int(round(lowest_mean))
+    best_period_start = f'{lowest_interval_start.strftime("%H:%M")}'
+    best_period_end = f'{lowest_interval_end.strftime("%H:%M")}'
+    best_period_intensity = int(round(lowest_mean))
     current = current_period_emission(df_forecast, period)
-    improvement = f'{int(round(100*(1 - best_hour_intensity/current)))} %'
+    improvement = f'{int(round(100*(1 - best_period_intensity/current)))} %'
     return {'current-intensity': current,
             'improvement': improvement,
-            'best-hour-start': best_hour_start,
-            'best-hour-end': best_hour_end,
-            'best-hour-intensity': best_hour_intensity}
+            'best-hour-start': best_period_start,
+            'best-hour-end': best_period_end,
+            'best-hour-intensity': best_period_intensity}
 
 
 def overview_next_day(df_forecast):
