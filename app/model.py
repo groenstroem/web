@@ -131,7 +131,8 @@ def build_model():
     border_colors = [f'rgba(0, {i+64}, 0, 0.9)' for i in range(128, 0, -32)] + ['#333']
     fg_colors = ['#FFF', '#FFF', '#EEE', '#EEE', '#EEE']
     levels = ['MEGET GRØN', 'GRØN', 'BÅDE GRØN OG SORT', 'PRIMÆRT SORT', 'KULSORT']
-    emission_intensity = {'intensity-level-bgcolor': bg_colors[index],
+    emission_intensity = {'success': True,
+                          'intensity-level-bgcolor': bg_colors[index],
                           'intensity-level-fgcolor': fg_colors[index],
                           'intensity-level-border-color': border_colors[index],
                           'intensity-level': levels[index],
@@ -152,11 +153,12 @@ def best_period(df_forecast, period, horizon):
     best_period_intensity = int(round(lowest_mean))
     current = current_period_emission(df_forecast, period)
     improvement = f'{int(round(100*(1 - best_period_intensity/current)))} %'
-    return {'current-intensity': current,
+    return {'success': True,
+            'current-intensity': current,
             'improvement': improvement,
-            'best-hour-start': best_period_start,
-            'best-hour-end': best_period_end,
-            'best-hour-intensity': best_period_intensity}
+            'best-period-start': best_period_start,
+            'best-period-end': best_period_end,
+            'best-period-intensity': best_period_intensity}
 
 
 def overview_next_day(df_forecast):

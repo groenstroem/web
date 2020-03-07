@@ -5,9 +5,9 @@ function updateGreenestPeriod() {
     $.get("/api/v1/greenest-period/" + period + "/" + horizon, function(data) {
         $("#current-intensity").text(data["current-intensity"]);
         $("#improvement").text(data["improvement"]);
-        $("#best-hour-start").text(data["best-hour-start"]);
-        $("#best-hour-end").text(data["best-hour-end"]);
-        $("#best-hour-intensity").text(data["best-hour-intensity"]);
+        $("#best-period-start").text(data["best-period-start"]);
+        $("#best-period-end").text(data["best-period-end"]);
+        $("#best-period-intensity").text(data["best-period-intensity"]);
     });
 }
 
