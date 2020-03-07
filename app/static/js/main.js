@@ -95,18 +95,19 @@ $(document).ready(function() {
     }
 });
 
-
 $('#toggle-notification').change(function() {
-    if ($(this).prop('checked'))
-    {
+    if ($(this).prop('checked')) {
         window.Notification.requestPermission().then(function (permission) {
-            console.log(permission)
+            // TODO: Provide feedback in case permission is not granted; this can happen if the user revoked the permission
+            // after having subscribed once, and in that case, the only way to regrant permission in e.g. Firefox and
+            // Chrome on Android is through the user agent's settings; that's poor UX.
             if (permission === 'granted') {
+                // Use the VAPID keys generated out of band. The corresponding private key will be used by the service
+                // responsible for actually pushing messages.
                 var applicationServerKey = urlB64ToUint8Array(
                     'BOhO7gueTjZ60EP0lxuR2-kmq1WqbenyPgq1ZWvINPG86uh8C0ssn5XM72ranRIrI1r0lNiK7GV4rIaUcj5HJns'
                 )
                 var options = { applicationServerKey: applicationServerKey, userVisibleOnly: true }
-                console.log(options)
                 navigator.serviceWorker.ready.then(function(reg)
                 {
                     reg.pushManager.subscribe(options).then(function(subscription) {
@@ -122,7 +123,7 @@ $('#toggle-notification').change(function() {
                     subscription.unsubscribe().then(function(successful) {
                         removeSubscription(subscription)
                     }).catch(function(e) {
-                        // Unsubscription failed
+                        // TODO: Handle errors
                     })
                 }
             })        
