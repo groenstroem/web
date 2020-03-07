@@ -56,7 +56,7 @@ def _wait_until_not_generating():
         generating = cache.get(GENERATING_IDENTIFIER)
         if not generating:
             break
-        if counter > 50:
+        if counter > 100:
             raise RuntimeError('timeout while waiting for data to be generated')
         time.sleep(0.1)
         counter += 1
