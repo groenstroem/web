@@ -102,17 +102,15 @@ $('#toggle-notification').change(function() {
         window.Notification.requestPermission().then(function (permission) {
             console.log(permission)
             if (permission === 'granted') {
-                const applicationServerKey = urlB64ToUint8Array(
+                var applicationServerKey = urlB64ToUint8Array(
                     'BOhO7gueTjZ60EP0lxuR2-kmq1WqbenyPgq1ZWvINPG86uh8C0ssn5XM72ranRIrI1r0lNiK7GV4rIaUcj5HJns'
                 )
-                const options = { applicationServerKey, userVisibleOnly: true }
+                var options = { applicationServerKey: applicationServerKey, userVisibleOnly: true }
                 console.log(options)
                 navigator.serviceWorker.ready.then(function(reg)
                 {
                     reg.pushManager.subscribe(options).then(function(subscription) {
-                        saveSubscription(subscription).then(function(response) {
-                            console.log(response)
-                        })
+                        saveSubscription(subscription)
                     })
                 })
             }
@@ -167,44 +165,46 @@ function registerServiceWorker() {
     if (navigator && navigator.serviceWorker) {
         navigator.serviceWorker
             .register('/sw.js')
-            .then(registration => {
+            .then(function(registration) {
                 console.log("Scope", registration.scope)
             })
-            .catch(e => console.error("ServiceWorker failed: ", e))
+            .catch(function(e) { console.error("ServiceWorker failed: ", e) })
     }
 }
 
 // urlB64ToUint8Array is a magic function that will encode the base64 public key
 // to Array buffer which is needed by the subscription option
-const urlB64ToUint8Array = base64String => {
-    const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
-    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/')
-    const rawData = atob(base64)
-    const outputArray = new Uint8Array(rawData.length)
+function urlB64ToUint8Array(base64String) {
+    var padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+    var base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/')
+    var rawData = atob(base64)
+    var outputArray = new Uint8Array(rawData.length)
     for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i)
+        outputArray[i] = rawData.charCodeAt(i)
     }
     return outputArray
-  }
-
-const saveSubscription = async subscription => {
-    const response = await fetch('/api/v1/save-subscription', {
-        method: 'post',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(subscription),
-    })
-    return response.json()
 }
 
-const removeSubscription = async subscription => {
-    const response = await fetch('/api/v1/remove-subscription', {
+function saveSubscription(subscription) {
+    fetch('/api/v1/save-subscription', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(subscription),
+    }).then(function(response) {
+        return response.json()
+    });
+}
+
+function removeSubscription(subscription) {
+    fetch('/api/v1/remove-subscription', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(subscription),
+    }).then(function(response) {
+        return response.json()
     })
-    return response.json()
 }
