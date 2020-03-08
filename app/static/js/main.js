@@ -74,6 +74,8 @@ $(document).ready(function() {
         $("#firefox-android-guide").css('display', 'inherit');
     if (ua.indexOf('chrome') > -1 && ua.indexOf('android') > -1)
         $("#chrome-android-guide").css('display', 'inherit');
+    if (ua.indexOf('chrome') > -1 && ua.indexOf('android') == -1)
+        $("#chrome-desktop-guide").css('display', 'inherit');
     if (ua.indexOf('fxios') > -1)
         $("#firefox-ios-guide").css('display', 'inherit');
     if (ua.indexOf('crios') > -1)
@@ -207,3 +209,37 @@ function removeSubscription(subscription) {
         return response.json()
     })
 }
+
+// Installation logic currently just used to provide an "install" button on Chrome for Android.
+// This particular pattern is taken verbatim from the MDN example at https://mdn.github.io/pwa-examples/a2hs/
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', function(e) {
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+    // Update UI to notify the user they can add to home screen
+    var ua = navigator.userAgent.toLowerCase();
+    if (ua.indexOf('android') > -1) {
+        $('#chrome-android-guide').css('display', 'block');
+    } else {
+        $('#chrome-desktop-guide').css('display', 'block');
+    }
+
+    $('.install-button').click(function(e) {
+        // Hide our user interface that shows our A2HS button
+        var ua = navigator.userAgent.toLowerCase();
+        if (ua.indexOf('android') > -1) {
+            $('#chrome-android-guide').css('display', 'none');
+        } else {
+            $('#chrome-desktop-guide').css('display', 'none');
+        }
+        // Show the prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        deferredPrompt.userChoice.then(function(choiceResult) {
+            deferredPrompt = null;
+        });
+    });
+});
