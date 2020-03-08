@@ -15,6 +15,9 @@ function updateEmissionIntensity() {
     // Update the main information about emission intensities, and the corresponding plot.
     $.get("/api/v1/current-emission-intensity", function(data) {
         $("#jumbotron").css("background-color", data["intensity-level-bgcolor"]);
+        $("meta[name='theme-color']").attr("content", data["intensity-level-bgcolor"]);
+        $("meta[name='msapplication-navbutton-color']").attr("content", data["intensity-level-bgcolor"]);
+        $("meta[name='apple-mobile-web-app-status-bar-style']").attr("content", data["intensity-level-bgcolor"]);
         $("#jumbotron").css("color", data["intensity-level-fgcolor"]);
         $("#info-link").css("color", data["intensity-level-fgcolor"]);
         $(".btn-transparent").css('border-color', data["intensity-level-border-color"]);
