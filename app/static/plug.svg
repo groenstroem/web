@@ -1,76 +1,109 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="512"
-   height="512"
    version="1.1"
-   id="svg3735"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="512px"
+   height="512px"
+   viewBox="0 0 512 512"
+   enable-background="new 0 0 512 512"
+   xml:space="preserve"
    sodipodi:docname="plug.svg"
-   inkscape:export-filename="C:\Users\sorfj\OneDrive - Ørsted\Desktop\plug.png"
-   inkscape:export-xdpi="0.77999997"
-   inkscape:export-ydpi="0.77999997"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
-  <defs
-     id="defs3739" />
-  <sodipodi:namedview
-     pagecolor="#00c200"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0.72941176"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1851"
-     inkscape:window-height="1057"
-     id="namedview3737"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:zoom="1.2685676"
-     inkscape:cx="277.3305"
-     inkscape:cy="244.12899"
-     inkscape:window-x="61"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg3735"
-     inkscape:pagecheckerboard="false" />
-  <title
-     id="title3727">Electrical Plug</title>
-  <metadata
-     id="metadata7">image/svg+xmlSergio Luiz Araujo Silvaoutletelectricityenergypowerhomeoffice<rdf:RDF>
-  <cc:Work
-     rdf:about="">
-    <dc:format>image/svg+xml</dc:format>
-    <dc:type
-       rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-    <dc:title>Electrical Plug</dc:title>
-  </cc:Work>
-</rdf:RDF>
-</metadata>
-  <path
-     style="fill:#ffffff;fill-opacity:1;stroke:#080000;stroke-width:2.56571627;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     inkscape:connector-curvature="0"
-     id="path2821"
-     d="m 343.51565,142.77331 c -4.10771,-5.17833 -11.59062,-6.04166 -16.76952,-1.93454 l -38.05727,30.18432 -18.60787,-23.46145 c -1.29696,-1.64283 -3.97608,-1.95143 -5.61391,-0.64764 l -36.25844,28.75791 C 197.41285,200.097 188.80604,241.9777 205.3068,275.88839 l -59.97637,47.56966 c -7.76642,6.16028 -9.05877,17.3622 -2.89905,25.12863 6.15967,7.76642 17.36256,9.05954 25.12886,2.89927 l 59.97632,-47.56968 c 29.26314,23.78931 72.004,24.94518 102.79901,0.51957 l 36.2587,-28.75784 c 1.64333,-1.29697 1.95122,-3.97686 0.64783,-5.61379 l -18.60785,-23.46193 38.05728,-30.18424 c 5.17761,-4.10707 6.04097,-11.5905 1.93454,-16.76889 -4.10771,-5.17838 -11.59062,-6.04161 -16.76952,-1.93455 l -38.05727,30.18425 -30.27545,-38.17246 38.05727,-30.18425 c 5.17762,-4.10706 6.04098,-11.59061 1.93455,-16.7689 z" />
-  <rect
-     style="fill:#00c000;fill-opacity:1;stroke:none;stroke-width:20;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     id="rect4583"
-     width="512"
-     height="512"
-     x="0"
-     y="0" />
-  <path
-     style="fill:#ffffff;fill-opacity:1;stroke:#080000;stroke-width:2.56571627;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     inkscape:connector-curvature="0"
-     id="path2821-4"
-     d="m 343.51565,142.77331 c -4.10771,-5.17833 -11.59062,-6.04166 -16.76952,-1.93454 l -38.05727,30.18432 -18.60787,-23.46145 c -1.29696,-1.64283 -3.97608,-1.95143 -5.61391,-0.64764 l -36.25844,28.75791 C 197.41285,200.097 188.80604,241.9777 205.3068,275.88839 l -59.97637,47.56966 c -7.76642,6.16028 -9.05877,17.3622 -2.89905,25.12863 6.15967,7.76642 17.36256,9.05954 25.12886,2.89927 l 59.97632,-47.56968 c 29.26314,23.78931 72.004,24.94518 102.79901,0.51957 l 36.2587,-28.75784 c 1.64333,-1.29697 1.95122,-3.97686 0.64783,-5.61379 l -18.60785,-23.46193 38.05728,-30.18424 c 5.17761,-4.10707 6.04097,-11.5905 1.93454,-16.76889 -4.10771,-5.17838 -11.59062,-6.04161 -16.76952,-1.93455 l -38.05727,30.18425 -30.27545,-38.17246 38.05727,-30.18425 c 5.17762,-4.10706 6.04098,-11.59061 1.93455,-16.7689 z" />
-</svg>
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:export-filename="C:\Users\sorfj\repos\groen-kontakt-web\app\static\plug-512.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"><metadata
+   id="metadata3753"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs3751"><clipPath
+     clipPathUnits="userSpaceOnUse"
+     id="clipPath4610"><use
+       x="0"
+       y="0"
+       xlink:href="#g4606"
+       id="use4612"
+       width="100%"
+       height="100%" /></clipPath></defs><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1851"
+   inkscape:window-height="1057"
+   id="namedview3749"
+   showgrid="false"
+   inkscape:zoom="2.840089"
+   inkscape:cx="189.81408"
+   inkscape:cy="185.82308"
+   inkscape:window-x="61"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="layer1"
+   inkscape:pagecheckerboard="true" />
+
+
+
+<g
+   inkscape:groupmode="layer"
+   id="layer2"
+   inkscape:label="Layer 2" /><g
+   inkscape:groupmode="layer"
+   id="layer1"
+   inkscape:label="Layer 1"><g
+     id="g4608"
+     clip-path="url(#clipPath4610)"><g
+       inkscape:label="Clip"
+       id="g4606"><circle
+         r="182"
+         style="fill:#40a629;stroke-width:0.91000003"
+         id="circle3734"
+         cy="256"
+         cx="256" /><line
+         style="fill:none;stroke:#ffffff;stroke-width:25.795;stroke-miterlimit:10;stroke-dasharray:none;stroke-linecap:butt;paint-order:markers fill stroke;stroke-linejoin:bevel"
+         id="line3736"
+         y2="401.85754"
+         x2="110.14249"
+         y1="256"
+         x1="256"
+         stroke-miterlimit="10" /></g></g><g
+     style=""
+     id="g3746"
+     transform="matrix(0.91000002,0,0,0.91000002,23.040011,23.039995)">
+	<path
+   stroke-miterlimit="10"
+   d="m 278.378,339.689 c -1.841,1.84 -69.807,30.143 -71.76,28.189 l -62.497,-62.496 c -1.953,-1.953 26.35,-69.919 28.19,-71.759 l 46.643,-46.643 c 1.84,-1.839 4.915,-1.749 6.867,0.204 l 98.995,98.995 c 1.953,1.953 2.044,5.027 0.204,6.867 z"
+   id="path3738"
+   inkscape:connector-curvature="0"
+   style="fill:#ffffff;stroke:#ffffff;stroke-width:14.17319965;stroke-miterlimit:10" />
+	<g
+   id="g3744">
+		<path
+   stroke-miterlimit="10"
+   d="m 202.959,250.823 c -0.977,0.977 -2.56,0.977 -3.536,0 v 0 c -0.977,-0.977 -0.977,-2.559 0,-3.536 l 102.531,-102.53 c 0.976,-0.977 2.559,-0.977 3.535,0 v 0 c 0.977,0.977 0.977,2.559 0,3.536 z"
+   id="path3740"
+   inkscape:connector-curvature="0"
+   style="fill:#ffffff;stroke:#ffffff;stroke-width:14.17319965;stroke-miterlimit:10" />
+		<path
+   stroke-miterlimit="10"
+   d="m 264.713,312.578 c -0.977,0.977 -2.56,0.977 -3.536,0 v 0 c -0.977,-0.977 -0.977,-2.561 0,-3.537 l 102.53,-102.53 c 0.977,-0.977 2.56,-0.977 3.536,0 v 0 c 0.977,0.976 0.977,2.559 0,3.535 z"
+   id="path3742"
+   inkscape:connector-curvature="0"
+   style="fill:#ffffff;stroke:#ffffff;stroke-width:14.17319965;stroke-miterlimit:10" />
+	</g>
+</g></g></svg>
