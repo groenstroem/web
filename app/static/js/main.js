@@ -167,12 +167,7 @@ $(".dropdown-menu>a").on('click', function() {
 
 function registerServiceWorker() {
     if (navigator && navigator.serviceWorker) {
-        navigator.serviceWorker
-            .register('/sw.js')
-            .then(function(registration) {
-                console.log("Scope", registration.scope)
-            })
-            .catch(function(e) { console.error("ServiceWorker failed: ", e) })
+        navigator.serviceWorker.register('/sw.js')
     }
 }
 
