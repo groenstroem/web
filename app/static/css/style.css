@@ -33,8 +33,36 @@ body {
 }
 
 .btn-transparent {
-    font-size: 5vmin;
+    font-size: inherit;
     border: 1px solid;
     padding: 5px 10px 5px 10px;
     margin-bottom: 2px;
+}
+
+.landing {
+    font-size: 1vh;
+}
+
+@media (max-width: 185vh) {
+  .landing {
+    font-size: 0.77vh;
+  }
+}
+
+@media (max-width: 140vh) {
+  .landing {
+    font-size: 0.65vh;
+  }
+}
+
+@media (max-width: 90vh) {
+  .landing {
+    font-size: 0.6vh;
+  }
+}
+
+@media (max-width: 70vh) {
+  .landing {
+    font-size: 0.5vh;
+  }
 }
