@@ -1,6 +1,7 @@
 self.addEventListener("push", function(event) {
     if (event.data) {
-        showLocalNotification("Grøn strøm", event.data.text(),  self.registration);
+        data = event.data.json()
+        showLocalNotification(data.title, data.message, self.registration);
     }
 });
 
