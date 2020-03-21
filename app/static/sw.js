@@ -8,6 +8,7 @@ self.addEventListener("push", function(event) {
 const showLocalNotification = (title, body, swRegistration) => {
     const options = {
         body: body,
+        badge: "/badge.png",
         icon: "/plug-512.png",
         vibrate: [100, 100],
     };
