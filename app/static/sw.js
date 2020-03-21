@@ -10,7 +10,6 @@ const showLocalNotification = (title, body, swRegistration) => {
         body: body,
         badge: "/badge.png",
         icon: "/plug-512.png",
-        vibrate: [100, 100],
     };
     swRegistration.showNotification(title, options);
 };
