@@ -24,6 +24,10 @@ body {
     -webkit-overflow-scrolling:touch;
 }
 
+h2 {
+    color: #0a0;
+}
+
 .semi-bold {
     font-family: 'Inter Semi Bold';
 }
