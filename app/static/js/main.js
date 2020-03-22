@@ -82,19 +82,22 @@ $(document).ready(function() {
         $("#chrome-ios-guide").css('display', 'inherit');
     if (ua.indexOf('safari') > -1 && isiOS)
         $("#safari-ios-guide").css('display', 'inherit');
-    if (ua.indexOf('firefox') > -1 || ua.indexOf('chrome') > -1) {
-        $("#settings").css('display', 'inherit');
-    }
 
     if (navigator && navigator.serviceWorker) {
-        // Ensure that the "Få daglig opdatering" checkbox is disabled, if we are not
-        // currently subscribing to push messages
         navigator.serviceWorker.ready.then(function (reg) {
-            reg.pushManager.getSubscription().then(function(sub) {
-                if (sub == null) {
-                    $('#toggle-notification').prop('checked', sub != null).change();
-                }
-            });
+            if (reg.pushManager) {
+                // By restricting to browsers whose registration has a pushManager, we effectively
+                // only support Firefox and Chrome, simply because Safari doesn't follow the spec.
+                // Hopefully, in time, they will.
+                $("#settings").css('display', 'inherit');
+                // Ensure that the "Få daglig opdatering" checkbox is disabled, if we are not
+                // currently subscribing to push messages.
+                reg.pushManager.getSubscription().then(function(sub) {
+                    if (sub == null) {
+                        $('#toggle-notification').prop('checked', sub != null).change();
+                    }
+                });
+            }
         });
     
     }
