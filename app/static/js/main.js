@@ -73,10 +73,6 @@ $(document).ready(function() {
         $("#not-android-ios-guide").css('display', 'inherit');
     if (ua.indexOf('firefox') > -1 && ua.indexOf('android') > -1)
         $("#firefox-android-guide").css('display', 'inherit');
-    if (isChrome && ua.indexOf('android') > -1)
-        $("#chrome-android-guide").css('display', 'inherit');
-    if (isChrome && ua.indexOf('android') == -1)
-        $("#chrome-desktop-guide").css('display', 'inherit');
     if (ua.indexOf('fxios') > -1)
         $("#firefox-ios-guide").css('display', 'inherit');
     if (ua.indexOf('crios') > -1)
