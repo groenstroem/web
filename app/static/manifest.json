@@ -18,5 +18,6 @@
   ],
   "name": "Er strømmen grøn?",
   "short_name": "Grøn strøm",
-  "start_url": "/"
+  "start_url": "/",
+  "scope": "/"
 }
