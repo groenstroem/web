@@ -132,6 +132,7 @@ def build_model():
     fg_colors = ['#FFF', '#FFF', '#EEE', '#EEE', '#EEE']
     levels = ['MEGET GRØN', 'GRØN', 'BÅDE GRØN OG SORT', 'PRIMÆRT SORT', 'KULSORT']
     emission_intensity = {'success': True,
+                          'current-intensity': current_emission,
                           'intensity-level-bgcolor': bg_colors[index],
                           'intensity-level-fgcolor': fg_colors[index],
                           'intensity-level-border-color': border_colors[index],

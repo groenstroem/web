@@ -3,7 +3,7 @@ function updateGreenestPeriod() {
     var period = $('#dropdown-toggle-period').data('value');
     var horizon = $('#dropdown-toggle-horizon').data('value');
     $.get("/api/v1/greenest-period/" + period + "/" + horizon, function(data) {
-        $("#current-intensity").text(data["current-intensity"]);
+        $("#average-intensity").text(data["current-intensity"]);
         $("#improvement").text(data["improvement"]);
         $("#best-period-start").text(data["best-period-start"]);
         $("#best-period-end").text(data["best-period-end"]);
@@ -21,6 +21,7 @@ function updateEmissionIntensity() {
         $("#jumbotron").css("color", data["intensity-level-fgcolor"]);
         $("#info-link").css("color", data["intensity-level-fgcolor"]);
         $(".btn-transparent").css('border-color', data["intensity-level-border-color"]);
+        $("#current-intensity").text(data["current-intensity"]);
         $("#intensity-level").text(data["intensity-level"]);
         $("#latest-data").text(data["latest-data"]);
         $("#body").css('visibility', 'visible');
