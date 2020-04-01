@@ -7,7 +7,6 @@ import math
 
 import altair as alt
 import pandas as pd
-import requests
 
 from .data import EmissionData
 
