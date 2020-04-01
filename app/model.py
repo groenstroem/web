@@ -176,7 +176,7 @@ def overview_next_day(df_forecast):
     colors = ['meget grøn', 'grøn', 'både grøn og sort', 'ret sort', 'kulsort']
     index = bisect(q, mean) - 1
     general_color = colors[index]
-    title = f'De næste 24 timer er strømmen generelt {general_color}'
-    message = f'Grønnest: {best_hour_start}-{best_hour_end} ({best_hour_intensity} g CO2/kWh).\n' +\
+    forecast_length = min(horizon, math.ceil(len(df_forecast) / 12))
+    title = f'De næste {forecast_length} timer er strømmen generelt {general_color}'
         f'Sortest: {worst_hour_start}-{worst_hour_end} ({worst_hour_intensity} g CO2/kWh).'
     return {'title': title, 'message': message}
