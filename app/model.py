@@ -162,8 +162,12 @@ def best_period(df_forecast, period, horizon):
 
 
 def overview_next_day(df_forecast):
-    mean = df_forecast[df_forecast.Minutes5UTC < df_forecast.Minutes5UTC.min() + pd.Timedelta('1D')].CO2Emission.mean()
-    lowest_mean, lowest_interval_start, lowest_interval_end = get_greenest(df_forecast, 1, 24)
+    period = 3
+    horizon = 24
+
+    mean = df_forecast[df_forecast.Minutes5UTC < df_forecast.Minutes5UTC.min() + pd.Timedelta(f'{horizon}H')]\
+        .CO2Emission.mean()
+    lowest_mean, lowest_interval_start, lowest_interval_end = get_greenest(df_forecast, period, horizon)
     best_hour_start = f'{lowest_interval_start.strftime("%H:%M")}'
     best_hour_end = f'{lowest_interval_end.strftime("%H:%M")}'
     best_hour_intensity = int(round(lowest_mean))
