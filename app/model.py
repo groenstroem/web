@@ -170,10 +170,14 @@ def overview_next_day(df_forecast):
     lowest_mean, lowest_interval_start, lowest_interval_end = get_greenest(df_forecast, period, horizon)
     best_hour_start = f'{lowest_interval_start.strftime("%H:%M")}'
     best_hour_end = f'{lowest_interval_end.strftime("%H:%M")}'
+    if lowest_interval_start.day != df_forecast.Minutes5UTC.min().day:
+        best_hour_end += ' i morgen'
     best_hour_intensity = int(round(lowest_mean))
-    highest_mean, highest_interval_start, highest_interval_end = get_blackest(df_forecast, 1, 24)
+    highest_mean, highest_interval_start, highest_interval_end = get_blackest(df_forecast, period, horizon)
     worst_hour_start = f'{highest_interval_start.strftime("%H:%M")}'
     worst_hour_end = f'{highest_interval_end.strftime("%H:%M")}'
+    if highest_interval_start.day != df_forecast.Minutes5UTC.min().day:
+        worst_hour_end += ' i morgen'
     worst_hour_intensity = int(round(highest_mean))
 
     q = EmissionIntensityModel.quintiles
