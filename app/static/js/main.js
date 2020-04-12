@@ -54,10 +54,23 @@ function updateEmissionIntensity() {
     });
 }
 
+function updateCurrentGenerationMix() {
+    $.get("/api/v1/current-generation-mix", function(data) {
+        $("#current-import").text(data["import"]);
+        $("#current-export").text(data["export"]);
+        $("#current-production").text(data["total-production"]);
+        var plot_data = data["plot-data"];
+        var plot_opt = {"renderer": "canvas", "actions": false};
+        vegaEmbed("#vis-generation-mix", plot_data, plot_opt);
+    });
+
+}
+
 function updateAll() {
     // Update all dynamic data on the page.
     updateEmissionIntensity();
     updateGreenestPeriod();
+    updateCurrentGenerationMix();
 }
 
 $(document).ready(function() {

@@ -3,10 +3,12 @@
 In particular, this provides all post-processing of Energinet's data.
 """
 from bisect import bisect
+from collections import namedtuple
 import math
 
 import altair as alt
 import pandas as pd
+import requests
 
 from .data import EmissionData
 
@@ -89,14 +91,14 @@ class EmissionIntensityModel:
             titleAngle=0,
             titleFont='Inter Regular',
             titleFontWeight='normal',
-            titleFontSize=13
+            titleFontSize=16,
+            labelFont='Inter Regular',
         ).configure_legend(
             title=None,
             orient='top-right',
             labelFont='Inter Regular',
-            labelFontSize=12
+            labelFontSize=13
         )
-
 
 def get_greenest(df_forecast, period: int, horizon: int):
     return get_extreme(df_forecast, period, horizon, False)
@@ -140,6 +142,89 @@ def build_model():
                           'latest-data': latest_data,
                           'plot-data': full_chart.to_dict()}
     return emission_intensity, model.data.df_forecast
+
+
+def build_current_generation_mix():
+    fields = 'HourDK,TotalLoad,Biomass,FossilGas,FossilHardCoal,FossilOil,HydroPower,OtherRenewable,SolarPower,Waste,OnshoreWindPower,OffshoreWindPower,ExchangeContinent,ExchangeGreatBelt,ExchangeNordicCountries'
+    # The production is split into the two Danish zones, so we'll want to pick
+    # out the top two rows. Now, for whatever reason, it very often happens that
+    # those two rows are a bunch of None's, in which case we'll want to pick
+    # out the /next/ two rows. We therefore take the first four rows, and check
+    # which ones to use.
+    res = requests.get(
+        f'https://api.energidataservice.dk/datastore_search?resource_id=electricitybalancenonv&fields={fields}&sort=HourUTC DESC&limit=4').json()
+    df = pd.DataFrame(res['result']['records'])
+    df = df.iloc[2:] if pd.isna(df.iloc[0].TotalLoad) else df.iloc[:2]
+    total = df.fillna(0).sum()
+
+    # Prepare data
+    EnergyType = namedtuple('EnergyType', ['danish_name', 'renewable'])
+    data_time = df.HourDK.iloc[0].replace('T', ' ')[:-3]
+    df2 = pd.DataFrame(total).reset_index()
+    df2.columns = ['type', 'production_mw']
+    to_plot = {'Biomass': EnergyType('Biomasse', True),
+               'FossilGas': EnergyType('Naturgas', False),
+               'FossilHardCoal': EnergyType('Kul', False),
+               'FossilOil': EnergyType('Olie', False),
+               'HydroPower': EnergyType('Vandkraft', True),
+               'OtherRenewable': EnergyType('Anden vedvarende', True),
+               'SolarPower': EnergyType('Sol', True),
+               'Waste': EnergyType('Affald', False),
+               'OnshoreWindPower': EnergyType('Landvind', True),
+               'OffshoreWindPower': EnergyType('Havvind', True)}
+    df2 = df2[df2.type.isin(to_plot)]
+    df2['danish_name'] = df2.type.map(lambda x: to_plot[x].danish_name)
+    df2['renewable'] = df2.type.map(lambda x: to_plot[x].renewable)
+    total_prod = df2.production_mw.sum()
+    df2['share'] = (df2.production_mw / total_prod * 100).map('{:.2f} %'.format).str.replace('.', ',')
+    df2['renewable_desc_str'] = df2.renewable.map(lambda x: 'Vedvarende energi' if x else 'Ikke-vedvarende energi')
+    df2['is_renewable_str'] = df2.renewable.map(lambda x: 'Ja' if x else 'Nej')
+    df2['production_str'] = df2.production_mw.map('{:.2f} MW'.format).str.replace('.', ',')
+
+    # Start plotting
+    b = '#333'
+    g = '#3B5'
+    chart = alt.Chart(df2).mark_bar().encode(
+        # Use a format of "d" on the x axis to avoid using "," as
+        # a thousands separator (which you wouldn't do in Danish)
+        x=alt.X('production_mw:Q',
+                axis=alt.Axis(title=['Strømproduktionen i Danmark [MW]', data_time], format='d')),
+        y=alt.Y('danish_name:O',
+                sort='-x',
+                axis=alt.Axis(title='')),
+        color=alt.Color('renewable_desc_str:O',
+                        scale=alt.Scale(domain=['Vedvarende energi', 'Ikke-vedvarende energi'],
+                                        range=[g, b])),
+        tooltip=[alt.Tooltip('danish_name', title='Energikilde'),
+                 alt.Tooltip('production_str', title='Produktion'),
+                 alt.Tooltip('share', title='Andel af produktion'),
+                 alt.Tooltip('is_renewable_str', title='Vedvarende energikilde')]
+    ).properties(width='container', height=300).configure_axis(
+        titleX=-122,
+        titleY=-353,
+        titleAlign='left',
+        titleAngle=0,
+        titleFont='Inter Regular',
+        titleFontWeight='normal',
+        titleFontSize=16,
+        labelFont='Inter Regular',
+        labelFontSize=13
+    ).configure_legend(
+        title=None,
+        orient='bottom-right',
+        labelFont='Inter Regular',
+        labelFontSize=13
+    )
+
+    # Aggregate outputs
+    exchanges = df[['ExchangeContinent', 'ExchangeNordicCountries']]
+    imp = round(exchanges[exchanges > 0].sum().sum())
+    exp = round(-exchanges[exchanges < 0].sum().sum())
+
+    return {'plot-data': chart.to_dict(),
+            'total-production': round(total_prod),
+            'import': imp,
+            'export': exp}
 
 
 def current_period_emission(df_forecast, period):

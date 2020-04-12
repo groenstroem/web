@@ -10,7 +10,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from flask import Flask, request
 
-from .cache import get_forecast, get_model
+from .cache import get_forecast, get_current_generation_mix, get_model
 from .model import best_period, overview_next_day
 from . import push
 
@@ -29,6 +29,11 @@ def root():
 def current_emission_intensity():
     model = get_model()
     return model
+
+
+@app.route('/api/v1/current-generation-mix')
+def current_generation_mix():
+    return get_current_generation_mix()
 
 
 @app.route('/api/v1/greenest-period/<period>/<horizon>', methods=['GET'])

@@ -93,14 +93,20 @@
     <div id="info" class="container">
         <div class="row">
             <div class="col-sm-12 col-lg-6 border-right">
+                <p>Seneste opdatering: <span id="latest-data"></span></p>
+                <div style="width: 88%; margin-top: 32px;" id="vis"></div>
+                <div style="width: 100%; margin-top: 40px;" id="vis-generation-mix"></div>
+                <p style="font-size: 0.9rem;">
+                    Samlet produktion i Danmark: <span id="current-production"></span> MW<br />
+                    Import fra andre lande: <span id="current-import"></span> MW<br />
+                    Eksport til andre lande: <span id="current-export"></span> MW
+                </p>
+            </div>
+            <div class="col-sm-12 col-lg-6" style="padding-left: 25px;">
                 <div class="semi-bold" id="settings" style="display: none;">
                     <p>Få dagligt overblik som pushbesked (beta): <input id="toggle-notification" type="checkbox" checked data-on="Ja" data-off="Nej" data-toggle="toggle" data-size="small" data-onstyle="success" data-offstyle="warning"></p>
                 </div>
-                <p>Seneste opdatering: <span id="latest-data"></span></p>
-                <div style="width: 88%;" id="vis"></div>
-            </div>
-            <div class="col-sm-12 col-lg-6" style="padding-left: 25px;">
-                <h2>Tip</h2>
+                <h2 style="margin-top: 40px;">Tip</h2>
                 <p>
                     En let måde at få informationen lige ved hånden på, er at besøge denne side på din smartphone
                     eller tablet og derefter tilføje siden til din <span class="semi-bold">home screen</span>.
