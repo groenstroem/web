@@ -232,7 +232,8 @@ class GenerationMixModel:
 
 def build_current_generation_mix():
     model = GenerationMixModel()
-    return {'plot-data': model.plot().to_dict(),
+    return {'success': True,
+            'plot-data': model.plot().to_dict(),
             'total-production': round(model.total_prod),
             'import': model.imp,
             'export': model.exp}
