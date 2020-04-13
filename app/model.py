@@ -5,6 +5,7 @@ In particular, this provides all post-processing of Energinet's data.
 from bisect import bisect
 from collections import namedtuple
 import math
+import datetime
 
 import altair as alt
 import pandas as pd
@@ -258,7 +259,7 @@ def best_period(df_forecast, period, horizon):
             'best-period-intensity': best_period_intensity}
 
 
-def overview_next_day(df_forecast):
+def overview_next_day(df_forecast, short_title: bool = False):
     period = 3
     horizon = 24
 
@@ -278,11 +279,18 @@ def overview_next_day(df_forecast):
     worst_hour_intensity = int(round(highest_mean))
 
     q = EmissionIntensityModel.quintiles
-    colors = ['meget grøn 💚', 'grøn 💚', 'både grøn og sort', 'ret sort 🏭', 'kulsort 🏭']
     index = bisect(q, mean) - 1
-    general_color = colors[index]
-    forecast_length = min(horizon, math.ceil(len(df_forecast) / 12))
-    title = f'De næste {forecast_length} timer er strømmen generelt {general_color}'
+    if short_title:
+        colors = ['Meget grøn 💚', 'Grøn 💚', 'Grøn og sort', 'Sort 🏭', 'Kulsort 🏭']
+        general_color = colors[index]
+        # New forecasts arrive around 16:00, so we change our title message accordingly.
+        prefix = 'i dag' if datetime.datetime.now().hour < 16 else 'det næste døgn'
+        title = f'Strømmen {prefix}: {general_color}'
+    else:
+        colors = ['meget grøn 💚', 'grøn 💚', 'både grøn og sort', 'ret sort 🏭', 'kulsort 🏭']
+        general_color = colors[index]
+        forecast_length = min(horizon, math.ceil(len(df_forecast) / 12))
+        title = f'De næste {forecast_length} timer er strømmen generelt {general_color}'
     message = f'🟢 Grønnest: {best_hour_start}-{best_hour_end} ({best_hour_intensity} g CO2/kWh).\n' +\
         f'⚫ Sortest: {worst_hour_start}-{worst_hour_end} ({worst_hour_intensity} g CO2/kWh).'
     return {'title': title, 'message': message}

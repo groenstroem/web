@@ -57,6 +57,12 @@ def next_day():
     return overview_next_day(forecast)
 
 
+@app.route('/api/v1/next-day-short')
+def next_day_short():
+    forecast = get_forecast()
+    return overview_next_day(forecast, True)
+
+
 @app.route('/api/v1/save-subscription', methods=['POST'])
 def save_subscription():
     try:
