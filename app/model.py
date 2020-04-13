@@ -8,9 +8,8 @@ import math
 
 import altair as alt
 import pandas as pd
-import requests
 
-from .data import EmissionData
+from .data import EmissionData, GenerationMixData
 
 
 class EmissionIntensityModel:
@@ -29,7 +28,7 @@ class EmissionIntensityModel:
     # but doing so takes so long that we'll want to cache the result (and hardcoding them is easier
     # than obtaining them from storage).
     quintiles = [0, 68, 112, 158, 227, 1000]
- 
+
     def plot(self):
         df_combined = self.df
         m = self.now_utc_int
@@ -100,6 +99,7 @@ class EmissionIntensityModel:
             labelFontSize=13
         )
 
+
 def get_greenest(df_forecast, period: int, horizon: int):
     return get_extreme(df_forecast, period, horizon, False)
 
@@ -108,7 +108,7 @@ def get_blackest(df_forecast, period: int, horizon: int):
     return get_extreme(df_forecast, period, horizon, True)
 
 
-def get_extreme(df_forecast, period: int, horizon: int, idxmax):
+def get_extreme(df_forecast, period: int, horizon: int, idxmax: bool):
     """Given forecast data, determines the greenest/blackest period of a given length in the given horizon."""
     df_next_day = df_forecast[df_forecast.Minutes5UTC < df_forecast.Minutes5UTC.min() + pd.Timedelta(f'{horizon}H')]
     min_periods = period * 12
@@ -144,87 +144,98 @@ def build_model():
     return emission_intensity, model.data.df_forecast
 
 
+# We explicitly keep track of all energy types that can appear in Energinet generation mix data.
+EnergyType = namedtuple('EnergyType', ['danish_name', 'renewable'])
+
+energy_types = {'Biomass': EnergyType('Biomasse', True),
+                'FossilGas': EnergyType('Naturgas', False),
+                'FossilHardCoal': EnergyType('Kul', False),
+                'FossilOil': EnergyType('Olie', False),
+                'HydroPower': EnergyType('Vandkraft', True),
+                'OtherRenewable': EnergyType('Anden vedvarende', True),
+                'SolarPower': EnergyType('Sol', True),
+                'Waste': EnergyType('Affald', False),
+                'OnshoreWindPower': EnergyType('Landvind', True),
+                'OffshoreWindPower': EnergyType('Havvind', True)}
+
+
+class GenerationMixModel:
+
+    RENEWABLE_ENERGY_STR = 'Vedvarende energi'
+    NON_RENEWABLE_ENERGY_STR = 'Ikke-vedvarende energi'
+
+    def __init__(self):
+        df_mix = GenerationMixData.build().df_mix
+        # Energy sources with no generation are representated by NaNs; get rid of those, and combine the results for DK1
+        # and DK2. If CO2 forecasts are ever split over DK1/DK2, we can treat the two separately here as well.
+        total = df_mix.fillna(0).sum()
+        # df_mix contains two rows representing the current time for each region; the times will always be the same, and
+        # we can just take one of them. The format is almost what we want, so we parse it as a string rather than rely
+        # on datetime libraries.
+        self.data_time = df_mix.HourDK.iloc[0].replace('T', ' ')[:-3]
+        df_total = pd.DataFrame(total).reset_index()
+        df_total.columns = ['type', 'production_mw']
+        # Remove exchange data from the data frame by only focussing on the hardcoded energy types; exchanges will be
+        # included in import/export calculations later.
+        self.data = df_total[df_total.type.isin(energy_types)]
+        self.data['danish_name'] = self.data.type.map(lambda x: energy_types[x].danish_name)
+        self.data['renewable'] = self.data.type.map(lambda x: energy_types[x].renewable)
+        self.total_prod = self.data.production_mw.sum()
+        # Explicitly define the share percentage string. It would be nicer if our plotting framework could do this for
+        # us, so we could keep the logic closer to the view, and indeed d3.js can automatically handle percentages, but
+        # not without changing decimal points.
+        self.data['share'] =\
+            (self.data.production_mw / self.total_prod * 100).map('{:.2f} %'.format).str.replace('.', ',')
+        self.data['renewable_desc_str'] =\
+            self.data.renewable.map(lambda x: self.RENEWABLE_ENERGY_STR if x else self.NON_RENEWABLE_ENERGY_STR)
+        self.data['is_renewable_str'] = self.data.renewable.map(lambda x: 'Ja' if x else 'Nej')
+        self.data['production_str'] = self.data.production_mw.map('{:.2f} MW'.format).str.replace('.', ',')
+        # Calculate import and export across each link separately; the double sum comes as a result of summing over all
+        # rows (i.e. regions, DK1/DK2) and all columns (i.e. import/export destinations) at the same time.
+        exchanges = df_mix[['ExchangeContinent', 'ExchangeNordicCountries']]
+        self.imp = round(exchanges[exchanges > 0].sum().sum())
+        self.exp = round(-exchanges[exchanges < 0].sum().sum())
+
+    def plot(self):
+        return alt.Chart(self.data).mark_bar().encode(
+            # Use a format of "d" on the x axis to avoid using "," as
+            # a thousands separator (which you wouldn't do in Danish)
+            x=alt.X('production_mw:Q',
+                    axis=alt.Axis(title=['Strømproduktionen i Danmark [MW]', self.data_time], format='d')),
+            y=alt.Y('danish_name:O',
+                    sort='-x',
+                    axis=alt.Axis(title='')),
+            color=alt.Color('renewable_desc_str:O',
+                            scale=alt.Scale(domain=[self.RENEWABLE_ENERGY_STR, self.NON_RENEWABLE_ENERGY_STR],
+                                            range=['#3B5', '#333'])),
+            tooltip=[alt.Tooltip('danish_name', title='Energikilde'),
+                     alt.Tooltip('production_str', title='Produktion'),
+                     alt.Tooltip('share', title='Andel af produktion'),
+                     alt.Tooltip('is_renewable_str', title='Vedvarende energikilde')]
+        ).properties(width='container', height=300).configure_axis(
+            titleX=-122,
+            titleY=-353,
+            titleAlign='left',
+            titleAngle=0,
+            titleFont='Inter Regular',
+            titleFontWeight='normal',
+            titleFontSize=16,
+            labelFont='Inter Regular',
+            labelFontSize=13
+        ).configure_legend(
+            title=None,
+            orient='bottom-right',
+            labelFont='Inter Regular',
+            labelFontSize=13
+        )
+
+
 def build_current_generation_mix():
-    fields = 'HourDK,TotalLoad,Biomass,FossilGas,FossilHardCoal,FossilOil,HydroPower,OtherRenewable,SolarPower,Waste,OnshoreWindPower,OffshoreWindPower,ExchangeContinent,ExchangeGreatBelt,ExchangeNordicCountries'
-    # The production is split into the two Danish zones, so we'll want to pick
-    # out the top two rows. Now, for whatever reason, it very often happens that
-    # those two rows are a bunch of None's, in which case we'll want to pick
-    # out the /next/ two rows. We therefore take the first four rows, and check
-    # which ones to use.
-    res = requests.get(
-        f'https://api.energidataservice.dk/datastore_search?resource_id=electricitybalancenonv&fields={fields}&sort=HourUTC DESC&limit=4').json()
-    df = pd.DataFrame(res['result']['records'])
-    df = df.iloc[2:] if pd.isna(df.iloc[0].TotalLoad) else df.iloc[:2]
-    total = df.fillna(0).sum()
-
-    # Prepare data
-    EnergyType = namedtuple('EnergyType', ['danish_name', 'renewable'])
-    data_time = df.HourDK.iloc[0].replace('T', ' ')[:-3]
-    df2 = pd.DataFrame(total).reset_index()
-    df2.columns = ['type', 'production_mw']
-    to_plot = {'Biomass': EnergyType('Biomasse', True),
-               'FossilGas': EnergyType('Naturgas', False),
-               'FossilHardCoal': EnergyType('Kul', False),
-               'FossilOil': EnergyType('Olie', False),
-               'HydroPower': EnergyType('Vandkraft', True),
-               'OtherRenewable': EnergyType('Anden vedvarende', True),
-               'SolarPower': EnergyType('Sol', True),
-               'Waste': EnergyType('Affald', False),
-               'OnshoreWindPower': EnergyType('Landvind', True),
-               'OffshoreWindPower': EnergyType('Havvind', True)}
-    df2 = df2[df2.type.isin(to_plot)]
-    df2['danish_name'] = df2.type.map(lambda x: to_plot[x].danish_name)
-    df2['renewable'] = df2.type.map(lambda x: to_plot[x].renewable)
-    total_prod = df2.production_mw.sum()
-    df2['share'] = (df2.production_mw / total_prod * 100).map('{:.2f} %'.format).str.replace('.', ',')
-    df2['renewable_desc_str'] = df2.renewable.map(lambda x: 'Vedvarende energi' if x else 'Ikke-vedvarende energi')
-    df2['is_renewable_str'] = df2.renewable.map(lambda x: 'Ja' if x else 'Nej')
-    df2['production_str'] = df2.production_mw.map('{:.2f} MW'.format).str.replace('.', ',')
-
-    # Start plotting
-    b = '#333'
-    g = '#3B5'
-    chart = alt.Chart(df2).mark_bar().encode(
-        # Use a format of "d" on the x axis to avoid using "," as
-        # a thousands separator (which you wouldn't do in Danish)
-        x=alt.X('production_mw:Q',
-                axis=alt.Axis(title=['Strømproduktionen i Danmark [MW]', data_time], format='d')),
-        y=alt.Y('danish_name:O',
-                sort='-x',
-                axis=alt.Axis(title='')),
-        color=alt.Color('renewable_desc_str:O',
-                        scale=alt.Scale(domain=['Vedvarende energi', 'Ikke-vedvarende energi'],
-                                        range=[g, b])),
-        tooltip=[alt.Tooltip('danish_name', title='Energikilde'),
-                 alt.Tooltip('production_str', title='Produktion'),
-                 alt.Tooltip('share', title='Andel af produktion'),
-                 alt.Tooltip('is_renewable_str', title='Vedvarende energikilde')]
-    ).properties(width='container', height=300).configure_axis(
-        titleX=-122,
-        titleY=-353,
-        titleAlign='left',
-        titleAngle=0,
-        titleFont='Inter Regular',
-        titleFontWeight='normal',
-        titleFontSize=16,
-        labelFont='Inter Regular',
-        labelFontSize=13
-    ).configure_legend(
-        title=None,
-        orient='bottom-right',
-        labelFont='Inter Regular',
-        labelFontSize=13
-    )
-
-    # Aggregate outputs
-    exchanges = df[['ExchangeContinent', 'ExchangeNordicCountries']]
-    imp = round(exchanges[exchanges > 0].sum().sum())
-    exp = round(-exchanges[exchanges < 0].sum().sum())
-
-    return {'plot-data': chart.to_dict(),
-            'total-production': round(total_prod),
-            'import': imp,
-            'export': exp}
+    model = GenerationMixModel()
+    return {'plot-data': model.plot().to_dict(),
+            'total-production': round(model.total_prod),
+            'import': model.imp,
+            'export': model.exp}
 
 
 def current_period_emission(df_forecast, period):
