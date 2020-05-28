@@ -233,11 +233,13 @@ class GenerationMixModel:
 
 def build_current_generation_mix():
     model = GenerationMixModel()
+    # We explicitly convert our import and export values to Python integers to avoid the possibility of them ending
+    # up as np.int64, which can not be serialized to JSON.
     return {'success': True,
             'plot-data': model.plot().to_dict(),
             'total-production': round(model.total_prod),
-            'import': model.imp,
-            'export': model.exp}
+            'import': int(round(model.imp)),
+            'export': int(round(model.exp))}
 
 
 def current_period_emission(df_forecast, period):
