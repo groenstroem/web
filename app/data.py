@@ -34,11 +34,11 @@ class EmissionData:
         data_history = requests.get(f'{BASE_URL}?resource_id={HISTORY_RESOURCE}{query}').json()
         data_forecast = requests.get(f'{BASE_URL}?resource_id={FORECAST_RESOURCE}{query}').json()
         df_history = pd.DataFrame(data_history['result']['records'])[::-1]
-        df_history['Minutes5DK'] = pd.to_datetime(df_history.Minutes5DK).dt.tz_localize('Europe/Copenhagen')
+        df_history['Minutes5DK'] = pd.to_datetime(df_history.Minutes5DK).dt.tz_localize('Europe/Copenhagen', ambiguous='NaT')
         df_history['Minutes5UTC'] = pd.to_datetime(df_history.Minutes5UTC)
         df_history['Type'] = 'Målt'
         df_forecast = pd.DataFrame(data_forecast['result']['records'])[::-1]
-        df_forecast['Minutes5DK'] = pd.to_datetime(df_forecast.Minutes5DK).dt.tz_localize('Europe/Copenhagen')
+        df_forecast['Minutes5DK'] = pd.to_datetime(df_forecast.Minutes5DK).dt.tz_localize('Europe/Copenhagen', ambiguous='NaT')
         df_forecast['Minutes5UTC'] = pd.to_datetime(df_forecast.Minutes5UTC)
         df_forecast['Type'] = 'Prognose'
         df_forecast = df_forecast[df_forecast.Minutes5DK >= df_history.Minutes5DK.max()]
