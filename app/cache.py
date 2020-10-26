@@ -6,7 +6,7 @@ we ensure that we will only generate new data (thus hit Energinet) only when wha
 import time
 
 from cachelib import RedisCache
-import pandas as pd
+import pyarrow as pa
 
 from .model import build_model, build_current_generation_mix
 
@@ -45,7 +45,7 @@ def get_forecast():
     _wait_until_not_generating(EMISSION_INTENSITY_GENERATING_IDENTIFIER)
     forecast = cache.get(FORECAST_IDENTIFIER)
     if forecast:
-        return pd.read_msgpack(forecast)
+        return pa.deserialize(forecast)
     _, forecast = _update_data()
     return forecast
 
@@ -74,7 +74,8 @@ def _update_data():
         cache.set(EMISSION_INTENSITY_GENERATING_IDENTIFIER, True)
         model, forecast = build_model()
         cache.set(EMISSION_INTENSITY_MODEL_IDENTIFIER, model, timeout=EMISSION_INTENSITY_TIMEOUT)
-        cache.set(FORECAST_IDENTIFIER, forecast.to_msgpack(compress='zlib'), timeout=EMISSION_INTENSITY_TIMEOUT)
+        serialized = pa.serialize(forecast).to_buffer()
+        cache.set(FORECAST_IDENTIFIER, serialized, timeout=EMISSION_INTENSITY_TIMEOUT)
         return model, forecast
     finally:
         cache.delete(EMISSION_INTENSITY_GENERATING_IDENTIFIER)

@@ -1,13 +1,3 @@
-import json
-import os
-import sqlite3
-import time
-import warnings
-# We disable FutureWarnings caused by Pandas 0.25.3 instructing us to replace our msgpack based deserialization with
-# pyarrow. Unfortunately, pyarrow has a bug making its usage impossible for our use cases, so we stick to msgpack, but
-# don't want to flood ourselves with warnings.
-warnings.simplefilter(action='ignore', category=FutureWarning)
-
 from flask import Flask, request
 
 from .cache import get_forecast, get_current_generation_mix, get_model
