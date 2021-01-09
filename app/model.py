@@ -73,10 +73,6 @@ class EmissionIntensityModel:
                             title='',
                             scale=alt.Scale(domain=interval.ref())))
 
-        # Add a dummy selection on the top plot, since otherwise tooltips will never show up, due to a bug in Vega-Lite:
-        # https://github.com/vega/vega-lite/issues/6003
-        top = top.add_selection(alt.selection_single())
-
         chart = top + today_chart + combined_rect_chart
         view = base.properties(width='container', height=50, selection=interval).encode(
             x=alt.X('Minutes5DK:T', axis=alt.Axis(format='%d/%m %H:%M'), title=''),
