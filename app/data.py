@@ -23,12 +23,13 @@ EMISSION_MIX_RESOURCE = 'electricitybalancenonv'
 class EmissionData:
     df_history: pd.DataFrame
     df_forecast: pd.DataFrame
+    df_previous_forecast: pd.DataFrame
 
     @classmethod
     def build(cls):
         """Produces data frames of emission intensities with 2 days of history and as long a forecast as possible."""
-        # The resolution of the data is 5 minutes, so we want (60/5) * 24 * 2 = 576 data points
-        limit = 576
+        # The resolution of the data is 5 minutes, so we want (60/5) * 24 * 4 data points
+        limit = int((60/5) * 24 * 3)
         query = f'&fields={EMISSION_INTENSITY_FIELDS}&sort={EMISSION_INTENSITY_SORT}' \
                 f'&limit={limit}&filters={EMISSION_INTENSITY_FILTERS}'
         data_history = requests.get(f'{BASE_URL}?resource_id={HISTORY_RESOURCE}{query}').json()
@@ -41,14 +42,16 @@ class EmissionData:
         df_forecast['Minutes5DK'] = pd.to_datetime(df_forecast.Minutes5DK).dt.tz_localize('Europe/Copenhagen', ambiguous='NaT')
         df_forecast['Minutes5UTC'] = pd.to_datetime(df_forecast.Minutes5UTC)
         df_forecast['Type'] = 'Prognose'
+        df_previous_forecast = df_forecast[df_forecast.Minutes5DK <= df_history.Minutes5DK.max()]
         df_forecast = df_forecast[df_forecast.Minutes5DK >= df_history.Minutes5DK.max()]
+        df_history = df_history[df_history.Minutes5DK >= df_previous_forecast.Minutes5DK.min()]
         # Replace forecasted value for current time with actual time, mainly to make it simpler to produce a connected
         # graph below.
-        df_forecast.iloc[0] = [df_history.Minutes5UTC.max(),
-                               df_history.Minutes5DK.max(),
-                               df_history.iloc[-1]['CO2Emission'],
-                               'Prognose']
-        return cls(df_history, df_forecast)
+        #df_forecast.iloc[0] = [df_history.Minutes5UTC.max(),
+        #                       df_history.Minutes5DK.max(),
+        #                       df_history.iloc[-1]['CO2Emission'],
+        #                       'Prognose']
+        return cls(df_history, df_forecast, df_previous_forecast)
 
 
 @dataclass

@@ -19,7 +19,7 @@ class EmissionIntensityModel:
     def __init__(self):
         self.data = EmissionData.build()
         self.forecast_length_hours = math.ceil(len(self.data.df_forecast) / 12)
-        self.df = pd.concat([self.data.df_history, self.data.df_forecast])
+        self.df = pd.concat([self.data.df_previous_forecast, self.data.df_forecast])
         self.now_utc_int = self.data.df_history.Minutes5UTC.astype(int).max() / 1000000
         self.min_time = self.df.Minutes5DK.min()
         self.max_time = self.df.Minutes5DK.max()
@@ -56,6 +56,14 @@ class EmissionIntensityModel:
                      alt.Tooltip('CO2Emission:Q', title='Intensitet [g CO2/kWh]')]
         )
 
+        base_actual = alt.Chart(self.data.df_history).mark_line(strokeWidth=4).encode(
+            alt.X('Minutes5DK:T', title=''),
+            alt.Y('CO2Emission:Q', title='Udledningsintensitet [g CO2/kWh]', scale=alt.Scale(domain=(0, height))),
+            alt.Color('Type:N'),
+            tooltip=[alt.Tooltip('Minutes5DK:T', title='Tid', format='%Y-%m-%d %H:%M'),
+                     alt.Tooltip('CO2Emission:Q', title='Intensitet [g CO2/kWh]')]
+        )
+
         today_line = alt.Chart(today).mark_rule(clip=True).encode(x='x:T', y='y:Q')
         today_chart = alt.Chart(today).mark_rule(clip=True).encode(
             x=alt.X('x:T', scale=alt.Scale(domain=interval.ref())), y='y:Q')
@@ -68,16 +76,16 @@ class EmissionIntensityModel:
         rect_charts = [make_rect(data, color)
                        for data, color in zip(rects, ['green', 'lightgreen', 'yellow', 'lightcoral', 'red'])]
         combined_rect_chart = rect_charts[0] + rect_charts[1] + rect_charts[2] + rect_charts[3] + rect_charts[4]
-        top = base.properties(width='container', height=300) \
+        top = (base + base_actual).properties(width='container', height=300) \
             .encode(x=alt.X('Minutes5DK:T',
                             axis=alt.Axis(format='%H'),
                             title='',
                             scale=alt.Scale(domain=interval.ref())))
 
         chart = top + today_chart + combined_rect_chart
-        view = base.properties(width='container', height=50, selection=interval).encode(
+        view = (base).properties(width='container', height=50, selection=interval).encode(
             x=alt.X('Minutes5DK:T', axis=alt.Axis(format='%d/%m %H:%M'), title=''),
-            y=alt.Y('CO2Emission:Q', title='', scale=alt.Scale(domain=(0, height))))
+            y=alt.Y('CO2Emission:Q', title='', scale=alt.Scale(domain=(0, height)))) + base_actual
 
         full_chart = chart & (view + today_line)
 
