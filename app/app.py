@@ -1,4 +1,7 @@
+import os
+
 from flask import Flask, request
+import requests
 
 from .cache import get_forecast, get_current_generation_mix, get_model
 from .model import best_period, overview_next_day
@@ -84,3 +87,16 @@ def slack():
             {"type": "section", "text": {"type": "mrkdwn", "text": overview["message"]}}
         ]
     }
+
+
+@app.route('/api/v1/slack-authorize', methods=['GET'])
+def slack_authorize():
+    code = request.args.get('code')
+    client_id = os.environ['SLACK_CLIENT_ID']
+    client_secret = os.environ['SLACK_CLIENT_SECRET']
+    resp = requests.post(
+        'https://slack.com/api/oauth.v2.access',
+        {'code': code, 'client_id': client_id, 'client_secret': client_secret}
+    ).json()
+    return "App added! Try using /erstroemmengroen in one of your channels"\
+        if resp["ok"] else f"Could not add app: {resp['error']}"
