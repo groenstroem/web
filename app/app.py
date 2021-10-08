@@ -71,3 +71,16 @@ def remove_subscription():
     except Exception as e:
         print(e)
         return {'success': False}
+
+
+@app.route('/api/v1/slack', methods=['POST'])
+def slack():
+    forecast = get_forecast()
+    overview = overview_next_day(forecast)
+    return {
+        "response_type": "in_channel",
+        "blocks": [
+            {"type": "section", "text": {"type": "mrkdwn", "text": overview["title"]}},
+            {"type": "section", "text": {"type": "mrkdwn", "text": overview["message"]}}
+        ]
+    }
