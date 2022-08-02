@@ -6,9 +6,7 @@ import pandas as pd
 import requests
 
 # General parts of the data queries that will be used for all purposes below
-BASE_URL = 'https://api.energidataservice.dk/datastore_search'
-EMISSION_INTENSITY_FIELDS = 'Minutes5UTC,Minutes5DK,CO2Emission'
-EMISSION_INTENSITY_SORT = 'Minutes5UTC desc'
+BASE_URL = 'https://api.energidataservice.dk/dataset/'
 EMISSION_INTENSITY_FILTERS = '{"PriceArea": "DK2"}'
 GENERATION_MIX_FIELDS = 'HourDK,TotalLoad,Biomass,FossilGas,FossilHardCoal,FossilOil,HydroPower,OtherRenewable,' \
                       'SolarPower,Waste,OnshoreWindPower,OffshoreWindPower,ExchangeContinent,ExchangeGreatBelt,' \
@@ -29,18 +27,19 @@ class EmissionData:
         """Produces data frames of emission intensities with 2 days of history and as long a forecast as possible."""
         # The resolution of the data is 5 minutes, so we want (60/5) * 24 * 2 = 576 data points
         limit = 576
-        query = f'&fields={EMISSION_INTENSITY_FIELDS}&sort={EMISSION_INTENSITY_SORT}' \
-                f'&limit={limit}&filters={EMISSION_INTENSITY_FILTERS}'
-        data_history = requests.get(f'{BASE_URL}?resource_id={HISTORY_RESOURCE}{query}').json()
-        data_forecast = requests.get(f'{BASE_URL}?resource_id={FORECAST_RESOURCE}{query}').json()
-        df_history = pd.DataFrame(data_history['result']['records'])[::-1]
+        query = f'?limit={limit}&filter={EMISSION_INTENSITY_FILTERS}'
+        data_history = requests.get(f'{BASE_URL}/{HISTORY_RESOURCE}{query}').json()
+        data_forecast = requests.get(f'{BASE_URL}/{FORECAST_RESOURCE}{query}').json()
+        df_history = pd.DataFrame(data_history['records'])[::-1]
         df_history['Minutes5DK'] = pd.to_datetime(df_history.Minutes5DK).dt.tz_localize('Europe/Copenhagen', ambiguous='NaT')
         df_history['Minutes5UTC'] = pd.to_datetime(df_history.Minutes5UTC)
         df_history['Type'] = 'Målt'
-        df_forecast = pd.DataFrame(data_forecast['result']['records'])[::-1]
+        df_history = df_history.drop(['PriceArea'], axis=1)
+        df_forecast = pd.DataFrame(data_forecast['records'])[::-1]
         df_forecast['Minutes5DK'] = pd.to_datetime(df_forecast.Minutes5DK).dt.tz_localize('Europe/Copenhagen', ambiguous='NaT')
         df_forecast['Minutes5UTC'] = pd.to_datetime(df_forecast.Minutes5UTC)
         df_forecast['Type'] = 'Prognose'
+        df_forecast = df_forecast.drop(['PriceArea'], axis=1)
         df_forecast = df_forecast[df_forecast.Minutes5DK >= df_history.Minutes5DK.max()]
         # Replace forecasted value for current time with actual time, mainly to make it simpler to produce a connected
         # graph below.
@@ -65,9 +64,9 @@ class EmissionDataQuintiles:
         """
         # We want three years of data or, ignoring leap years, (60/5) * 24 * 365 * 3 = 315360 data points.
         limit = 315360
-        query = f'&fields={EMISSION_INTENSITY_FIELDS}&sort={EMISSION_INTENSITY_SORT}&limit={limit}'
-        data = requests.get(f'{BASE_URL}?resource_id={HISTORY_RESOURCE}{query}').json()
-        values = np.array([x['CO2Emission'] for x in data['result']['records']])
+        query = f'?limit={limit}'
+        data = requests.get(f'{BASE_URL}/{HISTORY_RESOURCE}{query}').json()
+        values = np.array([x['CO2Emission'] for x in data['records']])
         quintiles_all = np.percentile(values, [20, 40, 60, 80])
         daily_averages = values.reshape(24, limit//24).mean(0)
         quintiles_daily_averages = np.percentile(daily_averages, [20, 40, 60, 80])
@@ -85,9 +84,9 @@ class GenerationMixData:
         # for consistency with how we handle data elsewhere.
         # The production is split into the two Danish zones, so we'll want to pick  out the top two rows. Now, for
         # whatever reason, it very often happens that those two rows are a bunch of None's, in which case we'll want to
-        # pick out the /next/ two rows. We therefore take the first four rows, and check which ones to use.
-        query = f'&fields={GENERATION_MIX_FIELDS}&sort={GENERATION_MIX_SORT}&limit=4'
-        response = requests.get(f'{BASE_URL}?resource_id={EMISSION_MIX_RESOURCE}{query}').json()
-        df = pd.DataFrame(response['result']['records'])
+        # pick out the /next/ two rows. We therefore take the first four rows, and check which ones to use.9
+        query = f'?fields={GENERATION_MIX_FIELDS}&sort={GENERATION_MIX_SORT}&limit=4'
+        response = requests.get(f'{BASE_URL}/{EMISSION_MIX_RESOURCE}{query}').json()
+        df = pd.DataFrame(response['records'])
         df_mix = df.iloc[2:] if pd.isna(df.iloc[0].TotalLoad) else df.iloc[:2]
         return cls(df_mix)
