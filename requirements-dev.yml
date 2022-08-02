@@ -2,11 +2,14 @@ channels:
   - conda-forge
 dependencies:
   - altair
+  - cachelib
   - flask
   - pandas
+  - pyarrow
+  - pytest
+  - redis-py
   - requests
   - uwsgi
   - vega
   - pip:
-    - cachelib
-    - redis
+    - pywebpush
