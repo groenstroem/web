@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "nu.xn__grnstrm_r1ae.twa",
+      "sha256_cert_fingerprints": [
+        "D5:84:D2:4A:7B:0E:EB:61:86:B1:8A:81:FD:3B:F4:5C:E7:B4:0E:33:34:EF:C5:89:05:EC:F7:54:97:86:63:4E"
+      ]
+    }
+  }
+]
