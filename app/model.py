@@ -192,7 +192,7 @@ class GenerationMixModel:
         self.data['production_str'] = self.data.production_mw.map('{:.2f} MW'.format).str.replace('.', ',')
         # Calculate import and export across each link separately; the double sum comes as a result of summing over all
         # rows (i.e. regions, DK1/DK2) and all columns (i.e. import/export destinations) at the same time.
-        exchanges = df_mix[['ExchangeContinent', 'ExchangeNordicCountries']]
+        exchanges = df_mix[['ExchangeContinent', 'ExchangeNordicCountries', 'ExchangeGreatBritain']]
         self.imp = round(exchanges[exchanges > 0].sum().sum())
         self.exp = round(-exchanges[exchanges < 0].sum().sum())
 

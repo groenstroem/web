@@ -84,9 +84,18 @@ class GenerationMixData:
         # for consistency with how we handle data elsewhere.
         # The production is split into the two Danish zones, so we'll want to pick  out the top two rows. Now, for
         # whatever reason, it very often happens that those two rows are a bunch of None's, in which case we'll want to
-        # pick out the /next/ two rows. We therefore take the first four rows, and check which ones to use.9
-        query = f'?fields={GENERATION_MIX_FIELDS}&sort={GENERATION_MIX_SORT}&limit=4'
+        # pick out the /next/ two rows. We therefore take the first four rows, and check which ones to use. Another thing
+        # that can happen is that the data for generation is there, but the import/export information is not, in which case
+        # we want to use the first rows that have that information, generally the 5th and 6th rows. If we can not find
+        # valid data, we default to using the first two rows.
+        query = f'?fields={GENERATION_MIX_FIELDS}&sort={GENERATION_MIX_SORT}&limit=24'
         response = requests.get(f'{BASE_URL}/{EMISSION_MIX_RESOURCE}{query}').json()
         df = pd.DataFrame(response['records'])
-        df_mix = df.iloc[2:] if pd.isna(df.iloc[0].TotalLoad) else df.iloc[:2]
+        starting_index = 0
+        for starting_index in range(0, 24, 2):
+            if not pd.isna(df.iloc[starting_index].ExchangeContinent):
+                break
+        else:
+            starting_index = 0
+        df_mix = df.iloc[starting_index:starting_index + 2]
         return cls(df_mix)
