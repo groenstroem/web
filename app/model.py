@@ -146,6 +146,7 @@ def build_model():
 EnergyType = namedtuple('EnergyType', ['danish_name', 'renewable'])
 
 energy_types = {'Biomass': EnergyType('Biomasse', True),
+                'Biogas': EnergyType('Biogas', True),
                 'FossilGas': EnergyType('Naturgas', False),
                 'FossilHardCoal': EnergyType('Kul', False),
                 'FossilOil': EnergyType('Olie', False),
@@ -170,14 +171,14 @@ class GenerationMixModel:
         # df_mix contains two rows representing the current time for each region; the times will always be the same, and
         # we can just take one of them. The format is almost what we want, so we parse it as a string rather than rely
         # on datetime libraries.
-        self.data_time = df_mix.HourDK.iloc[0].replace('T', ' ')[:-3]
+        self.data_time = df_mix.TimeDK.iloc[0].replace('T', ' ')[:-3]
         df_total = pd.DataFrame(total).reset_index()
         df_total.columns = ['type', 'production_mw']
         # Remove exchange data from the data frame by only focussing on the hardcoded energy types; exchanges will be
         # included in import/export calculations later.
         self.data = df_total[df_total.type.isin(energy_types)]
         # Force production values to be floating points to avoid potential issues with attempting to serialize int64s
-        self.data['production_mw'] = self.data['production_mw'].astype(np.float)
+        self.data['production_mw'] = self.data['production_mw'].astype(np.float64)
         self.data['danish_name'] = self.data.type.map(lambda x: energy_types[x].danish_name)
         self.data['renewable'] = self.data.type.map(lambda x: energy_types[x].renewable)
         self.total_prod = self.data.production_mw.sum()
@@ -192,7 +193,7 @@ class GenerationMixModel:
         self.data['production_str'] = self.data.production_mw.map('{:.2f} MW'.format).str.replace('.', ',')
         # Calculate import and export across each link separately; the double sum comes as a result of summing over all
         # rows (i.e. regions, DK1/DK2) and all columns (i.e. import/export destinations) at the same time.
-        exchanges = df_mix[['ExchangeContinent', 'ExchangeNordicCountries', 'ExchangeGreatBritain']]
+        exchanges = df_mix[['ExchangeGermany', 'ExchangeSweden', 'ExchangeNorway', 'ExchangeNetherlands', 'ExchangeGreatBritain']]
         self.imp = round(exchanges[exchanges > 0].sum().sum())
         self.exp = round(-exchanges[exchanges < 0].sum().sum())
 

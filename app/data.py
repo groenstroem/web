@@ -8,13 +8,13 @@ import requests
 # General parts of the data queries that will be used for all purposes below
 BASE_URL = 'https://api.energidataservice.dk/dataset/'
 EMISSION_INTENSITY_FILTERS = '{"PriceArea": "DK2"}'
-GENERATION_MIX_FIELDS = 'HourDK,TotalLoad,Biomass,FossilGas,FossilHardCoal,FossilOil,HydroPower,OtherRenewable,' \
-                      'SolarPower,Waste,OnshoreWindPower,OffshoreWindPower,ExchangeContinent,ExchangeGreatBelt,' \
-                      'ExchangeNordicCountries'
-GENERATION_MIX_SORT = 'HourUTC desc'
+GENERATION_MIX_FIELDS = 'TimeDK,GrossCon,Biomass,Biogas,FossilGas,FossilHardCoal,FossilOil,HydroPower,OtherRenewable,' \
+                      'SolarPower,Waste,OnshoreWindPower,OffshoreWindPower,ExchangeGermany,ExchangeGreatBelt,' \
+                      'ExchangeSweden,ExchangeNorway,ExchangeNetherlands,ExchangeGreatBritain'
+GENERATION_MIX_SORT = 'TimeUTC desc'
 HISTORY_RESOURCE = 'co2emis'
 FORECAST_RESOURCE = 'co2emisprog'
-EMISSION_MIX_RESOURCE = 'electricitybalancenonv'
+EMISSION_MIX_RESOURCE = 'GenerationProdTypeExchange'
 
 
 @dataclass
@@ -89,11 +89,12 @@ class GenerationMixData:
         # we want to use the first rows that have that information, generally the 5th and 6th rows. If we can not find
         # valid data, we default to using the first two rows.
         query = f'?fields={GENERATION_MIX_FIELDS}&sort={GENERATION_MIX_SORT}&limit=24'
-        response = requests.get(f'{BASE_URL}/{EMISSION_MIX_RESOURCE}{query}').json()
+        url = f'{BASE_URL}/{EMISSION_MIX_RESOURCE}{query}'
+        response = requests.get(url).json()
         df = pd.DataFrame(response['records'])
         starting_index = 0
         for starting_index in range(0, 24, 2):
-            if not pd.isna(df.iloc[starting_index].ExchangeContinent):
+            if not pd.isna(df.iloc[starting_index].ExchangeGermany):
                 break
         else:
             starting_index = 0
