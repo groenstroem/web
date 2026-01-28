@@ -1,6 +1,5 @@
 import pandas.api.types as ptypes
 import pytest
-
 from app.data import EmissionData, GenerationMixData
 
 

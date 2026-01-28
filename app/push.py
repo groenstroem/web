@@ -6,8 +6,9 @@ we receive such an object, and store it an sqlite database.
 """
 import json
 import os
-import pywebpush
 import sqlite3
+
+import pywebpush
 
 DB_PATH = '/data/subs.db'
 

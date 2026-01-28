@@ -2,10 +2,10 @@
 
 In particular, this provides all post-processing of Energinet's data.
 """
+import datetime
+import math
 from bisect import bisect
 from collections import namedtuple
-import math
-import datetime
 
 import altair as alt
 import numpy as np

@@ -5,10 +5,10 @@ we ensure that we will only generate new data (thus hit Energinet) only when wha
 """
 import time
 
-from cachelib import RedisCache
 import pyarrow as pa
+from cachelib import RedisCache
 
-from .model import build_model, build_current_generation_mix
+from .model import build_current_generation_mix, build_model
 
 # We hardcode the Redis hostname 'redis', matching what we get if we use Docker Compose to spin up the app.
 REDIS_HOSTNAME = 'redis'

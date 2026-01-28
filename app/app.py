@@ -1,12 +1,11 @@
 import os
 
-from flask import Flask, request
 import requests
+from flask import Flask, request
 
-from .cache import get_forecast, get_current_generation_mix, get_model
-from .model import best_period, overview_next_day
 from . import push
-
+from .cache import get_current_generation_mix, get_forecast, get_model
+from .model import best_period, overview_next_day
 
 app = Flask(__name__,
             static_url_path='',
